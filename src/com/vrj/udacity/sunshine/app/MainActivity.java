@@ -14,14 +14,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.os.Build;
 
 public class MainActivity extends ActionBarActivity {
 
-	static protected View _container = null;
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -30,9 +27,6 @@ public class MainActivity extends ActionBarActivity {
 			getSupportFragmentManager().beginTransaction()
 					.add(R.id.container, new PlaceholderFragment()).commit();
 			
-			// Gaining access to root of inflated hierarchy
-			_container = (FrameLayout) this.findViewById(R.id.container);
-
 		}
 	}
 
@@ -66,6 +60,7 @@ public class MainActivity extends ActionBarActivity {
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
+			// This is the root of the hierarchy.  No need to get yourself.
 			View rootView = inflater.inflate(R.layout.fragment_main, container,
 					false);
 			
@@ -85,7 +80,7 @@ public class MainActivity extends ActionBarActivity {
 			List<String> weekforecast = new ArrayList<String>(
 					Arrays.asList(forecastArray));
 			
-			ArrayAdapter<String> weatherAdapter = new ArrayAdapter<String>(
+			ArrayAdapter<String> mForecastAdapter = new ArrayAdapter<String>(
 					// The current context (this fragment's parent activity.)
 					this.getActivity(),
 					// ID of list item layout
@@ -95,8 +90,9 @@ public class MainActivity extends ActionBarActivity {
 					// Forecast data as a list
 					weekforecast);
 			
-			ListView lv = (ListView) _container.findViewById(R.id.listview_forecast);
-			lv.setAdapter(weatherAdapter);  // Binding ArrayAdapter to ListView
+			// From the root of the Layout Hierarchy find the element you are looking for.
+			ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
+			listView.setAdapter(mForecastAdapter);  // Binding ArrayAdapter to ListView
 	
 			return rootView;
 		}
