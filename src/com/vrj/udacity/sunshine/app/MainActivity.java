@@ -1,5 +1,7 @@
 package com.vrj.udacity.sunshine.app;
 
+import java.util.ArrayList;
+
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -55,6 +57,17 @@ public class MainActivity extends ActionBarActivity {
 				Bundle savedInstanceState) {
 			View rootView = inflater.inflate(R.layout.fragment_main, container,
 					false);
+			ArrayList<String> weatherForecastList = new ArrayList<String>();
+			weatherForecastList.add("Today Ð Sunny Ð 83 / 66");
+			weatherForecastList.add("Tomorrow Ð Sunny Ð 73 / 65");
+			weatherForecastList.add("Sunday Ð Sunny Ð 63 / 56");
+			weatherForecastList.add("Monday Ð Cloudy Ð 76 / 46");
+			weatherForecastList.add("Tuesday Ð Partly Cloudy Ð 59 / 56");
+			weatherForecastList.add("Wednesday Ð Misty Ð 64 / 61");
+			weatherForecastList.add("Thursday Ð Clear Ð 80 / 69");
+			weatherForecastList.add("Friday Ð Foggy Ð 81 / 67");
+			weatherForecastList.add("Saturday Ð Partly Sunny Ð 78 / 56");
+			
 			return rootView;
 		}
 	}
