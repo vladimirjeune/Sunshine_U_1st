@@ -14,10 +14,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
+import android.widget.ListView;
 import android.os.Build;
 
 public class MainActivity extends ActionBarActivity {
 
+	static protected View _container = null;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -25,6 +29,10 @@ public class MainActivity extends ActionBarActivity {
 		if (savedInstanceState == null) {
 			getSupportFragmentManager().beginTransaction()
 					.add(R.id.container, new PlaceholderFragment()).commit();
+			
+			// Gaining access to root of inflated hierarchy
+			_container = (FrameLayout) this.findViewById(R.id.container);
+
 		}
 	}
 
@@ -86,7 +94,10 @@ public class MainActivity extends ActionBarActivity {
 					R.id.list_item_forecast_textview,
 					// Forecast data as a list
 					weekforecast);
-
+			
+			ListView lv = (ListView) _container.findViewById(R.id.listview_forecast);
+			lv.setAdapter(weatherAdapter);  // Binding ArrayAdapter to ListView
+	
 			return rootView;
 		}
 	}
