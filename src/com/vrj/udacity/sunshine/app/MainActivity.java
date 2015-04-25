@@ -77,8 +77,15 @@ public class MainActivity extends ActionBarActivity {
 			List<String> weekforecast = new ArrayList<String>(
 					Arrays.asList(forecastArray));
 			
-			ArrayAdapter<String> weatherAdapter = new ArrayAdapter<String>(this.getActivity(), R.layout.list_item_forecast, 
-					R.id.list_item_forecast_textview, weekforecast);
+			ArrayAdapter<String> weatherAdapter = new ArrayAdapter<String>(
+					// The current context (this fragment's parent activity.)
+					this.getActivity(),
+					// ID of list item layout
+					R.layout.list_item_forecast,
+					// ID of the textview to populate
+					R.id.list_item_forecast_textview,
+					// Forecast data as a list
+					weekforecast);
 
 			return rootView;
 		}
