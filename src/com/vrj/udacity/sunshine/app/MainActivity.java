@@ -118,7 +118,7 @@ public class MainActivity extends ActionBarActivity {
                 // Create the request to OpenWeatherMap, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
-                urlConnection.connect();
+                urlConnection.connect();  // You cannot do this on main thread.  Causes android.os.NetworkOnMainThreadException
  
                 // Read the input stream into a String
                 InputStream inputStream = urlConnection.getInputStream();
