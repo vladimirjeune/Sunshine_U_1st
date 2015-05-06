@@ -18,6 +18,9 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -34,8 +37,16 @@ public class ForecastFragment extends Fragment {
 	}
 
 	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		// Override this so the we can use menu events in here.
+		super.onCreate(savedInstanceState);
+		setHasOptionsMenu(true);		      // MUST BE CALLED HERE so we can handle menu events for Options Menu
+	}
+	
+	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+
 		// This is the root of the hierarchy.  No need to get yourself.
 		View rootView = inflater.inflate(R.layout.fragment_main, container,
 				false);
@@ -72,6 +83,26 @@ public class ForecastFragment extends Fragment {
 
         return rootView;
     }
+	
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
+		// Do not call super on this one
+		inflater.inflate(R.menu.forecastfragment, menu );
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected (MenuItem item) {
+		
+		switch(item.getItemId()) {
+			case R.id.action_refresh:
+				// new FetchWeatherTask().execute();
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
+			
+		}
+		
+	}
 	
 	/**
 	 * FETCHWEATHERTASK - AsyncTasks so .connect() does not step on the UIThread.
