@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -130,29 +131,56 @@ public class ForecastFragment extends Fragment {
 	            // Possible parameters are available at OWM's forecast API page, at
 	            // http://openweathermap.org/API#forecast
 	            URL url = new URL("http://api.openweathermap.org/data/2.5/forecast/daily?q=94043&mode=json&units=metric&cnt=7");
+	            final String authority  = "api.openweathermap.org";
+	            final String scheme     = "http";
+	            final String path       = "data/2.5/forecast/daily";
+	            final String qKey_zip   = "q";
+	            final String qKey_mode  = "mode";
+	            final String qKey_units = "units";
+	            final String qKey_cnt   = "cnt";
+	            
+	            String value_zip    = "94043";
+	            String value_mode   = "json";
+	            String value_units  = "metric";
+	            String value_cnt    = "7";
+	            
+	            Uri.Builder uriBuilder = new Uri.Builder();
+	            
+	            uriBuilder.scheme(scheme);
+	            uriBuilder.authority(authority);
+	            uriBuilder.path(path);
+	            uriBuilder.appendQueryParameter(qKey_zip, value_zip);
+	            uriBuilder.appendQueryParameter(qKey_mode, value_mode);
+	            uriBuilder.appendQueryParameter(qKey_units, value_units);
+	            uriBuilder.appendQueryParameter(qKey_cnt, value_cnt);
+	            uriBuilder.build();
+	            Log.v(LOG_TAG, "Here is the completed URI: " + uriBuilder.toString());
+	            
 
-	            URI uri = URI.create(url.toString());
-	            Log.v(LOG_TAG, "Authority: "+uri.getAuthority() 
+	            
+	            
+	            URI test_uri = URI.create(url.toString());
+	            Log.v(LOG_TAG, "Authority: "+test_uri.getAuthority() 
 	            		+ "\nFragment: " 
-	            		+ uri.getFragment()
+	            		+ test_uri.getFragment()
 	            		+ "\nHost: "
-	            		+ uri.getHost()
+	            		+ test_uri.getHost()
 	            		+ "\nPath: "
-	            		+ uri.getPath()
+	            		+ test_uri.getPath()
 	            		+ "\nPort: "
-	            		+ uri.getPort()
+	            		+ test_uri.getPort()
 	            		+ "\nQuery: "
-	            		+ uri.getQuery()
+	            		+ test_uri.getQuery()
 	            		+ "\nScheme: "
-	            		+ uri.getScheme()
+	            		+ test_uri.getScheme()
 	            		+ "\nScheme Specific Part: "
-	            		+ uri.getSchemeSpecificPart()
+	            		+ test_uri.getSchemeSpecificPart()
 	            		+ "\nUser Info: "
-	            		+ uri.getUserInfo()
+	            		+ test_uri.getUserInfo()
 	            		+ "\nIs Absolute?: "
-	            		+ uri.isAbsolute()
+	            		+ test_uri.isAbsolute()
 	            		+ "\nIs Opaque?: "
-	            		+ uri.isOpaque()
+	            		+ test_uri.isOpaque()
 	            		);
 	            
 	            
