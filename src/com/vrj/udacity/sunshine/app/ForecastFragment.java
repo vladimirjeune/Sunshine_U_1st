@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -130,6 +131,31 @@ public class ForecastFragment extends Fragment {
 	            // http://openweathermap.org/API#forecast
 	            URL url = new URL("http://api.openweathermap.org/data/2.5/forecast/daily?q=94043&mode=json&units=metric&cnt=7");
 
+	            URI uri = URI.create(url.toString());
+	            Log.v(LOG_TAG, "Authority: "+uri.getAuthority() 
+	            		+ "\nFragment: " 
+	            		+ uri.getFragment()
+	            		+ "\nHost: "
+	            		+ uri.getHost()
+	            		+ "\nPath: "
+	            		+ uri.getPath()
+	            		+ "\nPort: "
+	            		+ uri.getPort()
+	            		+ "\nQuery: "
+	            		+ uri.getQuery()
+	            		+ "\nScheme: "
+	            		+ uri.getScheme()
+	            		+ "\nScheme Specific Part: "
+	            		+ uri.getSchemeSpecificPart()
+	            		+ "\nUser Info: "
+	            		+ uri.getUserInfo()
+	            		+ "\nIs Absolute?: "
+	            		+ uri.isAbsolute()
+	            		+ "\nIs Opaque?: "
+	            		+ uri.isOpaque()
+	            		);
+	            
+	            
 	            // Create the request to OpenWeatherMap, and open the connection
 	            urlConnection = (HttpURLConnection) url.openConnection();
 	            urlConnection.setRequestMethod("GET");
