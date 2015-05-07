@@ -110,14 +110,14 @@ public class ForecastFragment extends Fragment {
 	 * FETCHWEATHERTASK - AsyncTasks so .connect() does not step on the UIThread.
 	 * You will pass in params[0] to URL and return modified JSON Strings
 	 */
-	public class FetchWeatherTask extends AsyncTask<Void, Void, Void>{
+	public class FetchWeatherTask extends AsyncTask<String, Void, Void>{
 
 		// Using this makes sure that if you update the name of the class
 		// it will throw Exception unless you update it here.  No unintended mismatches.
 		private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
 		
 		@Override
-		protected Void doInBackground(Void... params) {
+		protected Void doInBackground(String... params) {
 			// These two need to be declared outside the try/catch
 	        // so that they can be closed in the finally block.
 	        HttpURLConnection urlConnection = null;
@@ -150,6 +150,7 @@ public class ForecastFragment extends Fragment {
 	            uriBuilder.authority(authority);
 	            uriBuilder.path(path);
 	            uriBuilder.appendQueryParameter(qKey_zip, value_zip);
+//	            uriBuilder.appendQueryParameter(qKey_zip, params[0]);
 	            uriBuilder.appendQueryParameter(qKey_mode, value_mode);
 	            uriBuilder.appendQueryParameter(qKey_units, value_units);
 	            uriBuilder.appendQueryParameter(qKey_cnt, value_cnt);
