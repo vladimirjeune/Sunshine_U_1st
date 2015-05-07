@@ -120,7 +120,7 @@ public class ForecastFragment extends Fragment {
 		protected Void doInBackground(String... params) {
 			
 			// If there is no zipcode there is nothing to look up. Verify params size
-			if (params.length() < 1) {
+			if (params.length < 1) {
 				return null;
 			}
 			
@@ -136,7 +136,6 @@ public class ForecastFragment extends Fragment {
 	            // Construct the URL for the OpenWeatherMap query
 	            // Possible parameters are available at OWM's forecast API page, at
 	            // http://openweathermap.org/API#forecast
-	            URL url = new URL("http://api.openweathermap.org/data/2.5/forecast/daily?q=94043&mode=json&units=metric&cnt=7");
 	            final String AUTHORITY  = "api.openweathermap.org";
 	            final String SCHEME     = "http";
 	            final String PATH       = "data/2.5/forecast/daily";
@@ -145,7 +144,6 @@ public class ForecastFragment extends Fragment {
 	            final String QKEY_UNITS = "units";
 	            final String QKEY_CNT   = "cnt";
 	            
-	            String value_zip    = "94043";
 	            String value_mode   = "json";
 	            String value_units  = "metric";
 	            String value_cnt    = "7";
@@ -155,42 +153,14 @@ public class ForecastFragment extends Fragment {
 	            uriBuilder.scheme(SCHEME)
 	            	.authority(AUTHORITY)
 	            	.path(PATH)
-//	                .appendQueryParameter(QKEY_ZIP, value_zip)
 	                .appendQueryParameter(QKEY_ZIP, params[0])
 	                .appendQueryParameter(QKEY_MODE, value_mode)
 	                .appendQueryParameter(QKEY_UNITS, value_units)
 	                .appendQueryParameter(QKEY_CNT, value_cnt);
 	            uriBuilder.build();
 	            Log.v(LOG_TAG, "Here is the completed URI: " + uriBuilder.toString());
-	            
+	            URL url = new URL(uriBuilder.toString());  // Create URL from built URI
 
-	            
-	            
-	            URI test_uri = URI.create(url.toString());
-	            Log.v(LOG_TAG, "Authority: "+test_uri.getAuthority() 
-	            		+ "\nFragment: " 
-	            		+ test_uri.getFragment()
-	            		+ "\nHost: "
-	            		+ test_uri.getHost()
-	            		+ "\nPath: "
-	            		+ test_uri.getPath()
-	            		+ "\nPort: "
-	            		+ test_uri.getPort()
-	            		+ "\nQuery: "
-	            		+ test_uri.getQuery()
-	            		+ "\nScheme: "
-	            		+ test_uri.getScheme()
-	            		+ "\nScheme Specific Part: "
-	            		+ test_uri.getSchemeSpecificPart()
-	            		+ "\nUser Info: "
-	            		+ test_uri.getUserInfo()
-	            		+ "\nIs Absolute?: "
-	            		+ test_uri.isAbsolute()
-	            		+ "\nIs Opaque?: "
-	            		+ test_uri.isOpaque()
-	            		);
-	            
-	            
 	            // Create the request to OpenWeatherMap, and open the connection
 	            urlConnection = (HttpURLConnection) url.openConnection();
 	            urlConnection.setRequestMethod("GET");
