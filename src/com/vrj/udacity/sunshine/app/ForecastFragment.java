@@ -97,7 +97,7 @@ public class ForecastFragment extends Fragment {
 		
 		switch(item.getItemId()) {
 			case R.id.action_refresh:
-				new FetchWeatherTask().execute();
+				new FetchWeatherTask().execute("94043");  // String passed into doInBackground()
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);
@@ -118,6 +118,12 @@ public class ForecastFragment extends Fragment {
 		
 		@Override
 		protected Void doInBackground(String... params) {
+			
+			// If there is no zipcode there is nothing to look up. Verify params size
+			if (params.length() < 1) {
+				return null;
+			}
+			
 			// These two need to be declared outside the try/catch
 	        // so that they can be closed in the finally block.
 	        HttpURLConnection urlConnection = null;
@@ -131,13 +137,13 @@ public class ForecastFragment extends Fragment {
 	            // Possible parameters are available at OWM's forecast API page, at
 	            // http://openweathermap.org/API#forecast
 	            URL url = new URL("http://api.openweathermap.org/data/2.5/forecast/daily?q=94043&mode=json&units=metric&cnt=7");
-	            final String authority  = "api.openweathermap.org";
-	            final String scheme     = "http";
-	            final String path       = "data/2.5/forecast/daily";
-	            final String qKey_zip   = "q";
-	            final String qKey_mode  = "mode";
-	            final String qKey_units = "units";
-	            final String qKey_cnt   = "cnt";
+	            final String AUTHORITY  = "api.openweathermap.org";
+	            final String SCHEME     = "http";
+	            final String PATH       = "data/2.5/forecast/daily";
+	            final String QKEY_ZIP   = "q";
+	            final String QKEY_MODE  = "mode";
+	            final String QKEY_UNITS = "units";
+	            final String QKEY_CNT   = "cnt";
 	            
 	            String value_zip    = "94043";
 	            String value_mode   = "json";
@@ -146,14 +152,14 @@ public class ForecastFragment extends Fragment {
 	            
 	            Uri.Builder uriBuilder = new Uri.Builder();
 	            
-	            uriBuilder.scheme(scheme);
-	            uriBuilder.authority(authority);
-	            uriBuilder.path(path);
-	            uriBuilder.appendQueryParameter(qKey_zip, value_zip);
-//	            uriBuilder.appendQueryParameter(qKey_zip, params[0]);
-	            uriBuilder.appendQueryParameter(qKey_mode, value_mode);
-	            uriBuilder.appendQueryParameter(qKey_units, value_units);
-	            uriBuilder.appendQueryParameter(qKey_cnt, value_cnt);
+	            uriBuilder.scheme(SCHEME)
+	            	.authority(AUTHORITY)
+	            	.path(PATH)
+//	                .appendQueryParameter(QKEY_ZIP, value_zip)
+	                .appendQueryParameter(QKEY_ZIP, params[0])
+	                .appendQueryParameter(QKEY_MODE, value_mode)
+	                .appendQueryParameter(QKEY_UNITS, value_units)
+	                .appendQueryParameter(QKEY_CNT, value_cnt);
 	            uriBuilder.build();
 	            Log.v(LOG_TAG, "Here is the completed URI: " + uriBuilder.toString());
 	            
