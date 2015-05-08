@@ -166,7 +166,7 @@ public class ForecastFragment extends Fragment {
 	                .appendQueryParameter(QKEY_UNITS, value_units)
 	                .appendQueryParameter(QKEY_CNT, value_cnt);
 	            uriBuilder.build();
-	            Log.v(LOG_TAG, "Here is the completed URI: " + uriBuilder.toString());
+
 	            URL url = new URL(uriBuilder.toString());  // Create URL from built URI
 
 	            // Create the request to OpenWeatherMap, and open the connection
@@ -195,10 +195,9 @@ public class ForecastFragment extends Fragment {
 	                // Stream was empty.  No point in parsing.
 	                return null;
 	            }
+
 	            forecastJsonStr = buffer.toString();
-	            Log.v(LOG_TAG, forecastJsonStr);         // Making sure the INTERNET Intent is working
 	            forecastWeekArr = getWeatherDataFromJson(forecastJsonStr, Integer.parseInt(value_cnt));
-	            Log.v(LOG_TAG, Arrays.toString(forecastWeekArr));
 	            
 	        } catch (IOException e) {
 	            Log.e(LOG_TAG, "Error ", e);
@@ -233,19 +232,16 @@ public class ForecastFragment extends Fragment {
 		 */
 		@Override
 		protected void onPostExecute(String[] result) {
-			// TODO Auto-generated method stub
-			super.onPostExecute(result);
-			
-			// Clear out fake results
-			mForecastAdapter.clear();
-			
-			// Add new stuff from parameter.
-			// Min API 11 needed. :: // mForecastAdapter.addAll(result);
-			
-			for ( String text : result ) {
-				mForecastAdapter.add(text);
+			if ( result != null ) {
+				// Clear out fake results
+				mForecastAdapter.clear();
+				
+				// Add new stuff from parameter.
+				// Min API 11 needed. :: // mForecastAdapter.addAll(result);
+				for ( String text : result ) {
+					mForecastAdapter.add(text);
+				}
 			}
-			
 		}
 
 
@@ -341,9 +337,6 @@ public class ForecastFragment extends Fragment {
                 resultStrs[i] = day + " - " + description + " - " + highAndLow;
             }
  
-            for (String s : resultStrs) {
-                Log.v(LOG_TAG, "Forecast entry: " + s);
-            }
             return resultStrs;
  
         }
