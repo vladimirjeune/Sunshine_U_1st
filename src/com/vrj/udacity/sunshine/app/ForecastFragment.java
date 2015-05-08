@@ -40,6 +40,8 @@ import android.widget.ListView;
  */
 public class ForecastFragment extends Fragment {
 
+	private ArrayAdapter<String> mForecastAdapter = null;
+	
 	public ForecastFragment() {
 	}
 
@@ -74,7 +76,7 @@ public class ForecastFragment extends Fragment {
 		List<String> weekforecast = new ArrayList<String>(
 				Arrays.asList(forecastArray));
 		
-		ArrayAdapter<String> mForecastAdapter = new ArrayAdapter<String>(
+		mForecastAdapter = new ArrayAdapter<String>(
 				// The current context (this fragment's parent activity.)
 				this.getActivity(),
 				// ID of list item layout
@@ -222,11 +224,32 @@ public class ForecastFragment extends Fragment {
 	            }
 	        }
 	        
-			return null;
+			return forecastWeekArr;
 		}
 		
 		
-        /* The date/time conversion code is going to be moved outside the asynctask later,
+        /* (non-Javadoc)
+		 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
+		 */
+		@Override
+		protected void onPostExecute(String[] result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+			
+			// Clear out fake results
+			mForecastAdapter.clear();
+			
+			// Add new stuff from parameter.
+			// Min API 11 needed. :: // mForecastAdapter.addAll(result);
+			
+			for ( String text : result ) {
+				mForecastAdapter.add(text);
+			}
+			
+		}
+
+
+		/* The date/time conversion code is going to be moved outside the asynctask later,
          * so for convenience we're breaking it out into its own method now.
          */
         private String getReadableDateString(long time){
