@@ -98,11 +98,13 @@ public class ForecastFragment extends Fragment {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				// TODO Auto-generated method stub
+
+				// Got the string of the clicked item from mForecastAdapter
 				String words = mForecastAdapter.getItem(position);
 				
 				Log.d(getTag(), words);
-				Toast.makeText(getActivity().getApplicationContext(), words, Toast.LENGTH_SHORT).show();
+				// Used getActivity() as the context, and used the correct words.  Finally show the toast
+				Toast.makeText(getActivity(), words, Toast.LENGTH_SHORT).show();
 				
 				
 			}
