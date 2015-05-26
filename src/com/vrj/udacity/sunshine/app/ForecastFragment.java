@@ -30,8 +30,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -89,6 +91,22 @@ public class ForecastFragment extends Fragment {
 		// From the root of the Layout Hierarchy find the element you are looking for.
 		ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
 		listView.setAdapter(mForecastAdapter);  // Binding ArrayAdapter to ListView
+		
+		// Setting setItemClickListener
+		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				// TODO Auto-generated method stub
+				String words = mForecastAdapter.getItem(position);
+				
+				Log.d(getTag(), words);
+				Toast.makeText(getActivity().getApplicationContext(), words, Toast.LENGTH_SHORT).show();
+				
+				
+			}
+		});
 
         return rootView;
     }
