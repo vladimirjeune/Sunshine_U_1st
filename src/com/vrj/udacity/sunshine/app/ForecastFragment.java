@@ -103,14 +103,14 @@ public class ForecastFragment extends Fragment {
 					int position, long id) {
 
 				// Got the string of the clicked item from mForecastAdapter
-				String words = mForecastAdapter.getItem(position);
+				String forecast = mForecastAdapter.getItem(position);
 				
 				// Used getActivity() as the context, and used the correct words.  
 				// Gets Activity this Fragment is associated with.
 				Intent intent = new Intent(getActivity(), DetailActivity.class);
 				
 				// Msg to send with activity as Key:Value pair (string,forecast)
-				intent.putExtra(EXTRA_MESSAGE, words);
+				intent.putExtra(Intent.EXTRA_TEXT, forecast);
 				
 				// Have associated MainActivity start the DetailActivity with the forecast string as extra
 				getActivity().startActivity(intent);

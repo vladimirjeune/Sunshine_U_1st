@@ -1,5 +1,6 @@
 package com.vrj.udacity.sunshine.app;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
@@ -16,25 +17,12 @@ public class DetailActivity extends ActionBarActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		// Get payload from Intent
-		String message = getIntent().getStringExtra(ForecastFragment.EXTRA_MESSAGE);
+		setContentView(R.layout.activity_detail);
 		
-		// This is an Activity
-		TextView textView = new TextView(this);
-		
-		// Set text on textView to display
-		textView.setText(message);
-		
-//		setContentView(R.layout.activity_detail);
-		
-		// Add textView as root view of the activity's layout
-		setContentView(textView);
-		
-		// Normal stuff that was here.  Commented out since did not use activity_detail, which had id="container"
-//		if (savedInstanceState == null) {
-//			getSupportFragmentManager().beginTransaction()
-//					.add(R.id.container, new PlaceholderFragment()).commit();
-//		}
+		if (savedInstanceState == null) {
+			getSupportFragmentManager().beginTransaction()
+					.add(R.id.container, new PlaceholderFragment()).commit();
+		}
 	}
 
 	@Override
@@ -67,8 +55,18 @@ public class DetailActivity extends ActionBarActivity {
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
+			
+			// Get the intent that started this activity
+			Intent intent = getActivity().getIntent();
 			View rootView = inflater.inflate(R.layout.fragment_detail,
 					container, false);
+			
+			// Check for intent and extras
+			if ( (intent != null) && (intent.hasExtra(Intent.EXTRA_TEXT))) {
+				String forecast = intent.getStringExtra(Intent.EXTRA_TEXT);  // You sent text as the extra
+				((TextView) rootView.findViewById(R.id.detail_text)).setText(forecast) ;  // find the textView in the fragment_detail and set it.
+			}
+			
 			return rootView;
 		}
 	}
