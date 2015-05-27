@@ -1,26 +1,40 @@
 package com.vrj.udacity.sunshine.app;
 
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.os.Build;
+import android.widget.TextView;
 
 public class DetailActivity extends ActionBarActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_detail);
-		if (savedInstanceState == null) {
-			getSupportFragmentManager().beginTransaction()
-					.add(R.id.container, new PlaceholderFragment()).commit();
-		}
+		
+		// Get payload from Intent
+		String message = getIntent().getStringExtra(ForecastFragment.EXTRA_MESSAGE);
+		
+		// This is an Activity
+		TextView textView = new TextView(this);
+		
+		// Set text on textView to display
+		textView.setText(message);
+		
+//		setContentView(R.layout.activity_detail);
+		
+		// Add textView as root view of the activity's layout
+		setContentView(textView);
+		
+		// Normal stuff that was here.  Commented out since did not use activity_detail, which had id="container"
+//		if (savedInstanceState == null) {
+//			getSupportFragmentManager().beginTransaction()
+//					.add(R.id.container, new PlaceholderFragment()).commit();
+//		}
 	}
 
 	@Override
