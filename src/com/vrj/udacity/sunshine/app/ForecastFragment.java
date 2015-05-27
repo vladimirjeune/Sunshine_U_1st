@@ -18,6 +18,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -41,7 +42,9 @@ import android.widget.Toast;
  *
  */
 public class ForecastFragment extends Fragment {
-
+	// Package name ensures keys are unique in case interacts with other apps.
+	public final static String EXTRA_MESSAGE ="com.vrj.udacity.sunshine.app.MESSAGE"
+			;
 	private ArrayAdapter<String> mForecastAdapter = null;
 	
 	public ForecastFragment() {
@@ -102,11 +105,15 @@ public class ForecastFragment extends Fragment {
 				// Got the string of the clicked item from mForecastAdapter
 				String words = mForecastAdapter.getItem(position);
 				
-				Log.d(getTag(), words);
-				// Used getActivity() as the context, and used the correct words.  Finally show the toast
-				Toast.makeText(getActivity(), words, Toast.LENGTH_SHORT).show();
+				// Used getActivity() as the context, and used the correct words.  
+				// Gets Activity this Fragment is associated with.
+				Intent intent = new Intent(getActivity(), DetailActivity.class);
 				
+				// Msg to send with activity as Key:Value pair (string,forecast)
+				intent.putExtra(EXTRA_MESSAGE, words);
 				
+				// Have associated MainActivity start the DetailActivity with the forecast string as extra
+				getActivity().startActivity(intent);
 			}
 		});
 
