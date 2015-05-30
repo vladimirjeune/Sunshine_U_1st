@@ -34,7 +34,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -43,8 +42,7 @@ import android.widget.Toast;
  */
 public class ForecastFragment extends Fragment {
 	// Package name ensures keys are unique in case interacts with other apps.
-	public final static String EXTRA_MESSAGE ="com.vrj.udacity.sunshine.app.MESSAGE"
-			;
+	public final static String EXTRA_MESSAGE ="com.vrj.udacity.sunshine.app.MESSAGE";
 	private ArrayAdapter<String> mForecastAdapter = null;
 	
 	public ForecastFragment() {
@@ -95,7 +93,7 @@ public class ForecastFragment extends Fragment {
 		ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
 		listView.setAdapter(mForecastAdapter);  // Binding ArrayAdapter to ListView
 		
-		// Setting setItemClickListener
+		// Setting setItemClickListener to show detail of item clicked.
 		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
 			@Override
@@ -113,7 +111,7 @@ public class ForecastFragment extends Fragment {
 				intent.putExtra(Intent.EXTRA_TEXT, forecast);
 				
 				// Have associated MainActivity start the DetailActivity with the forecast string as extra
-				getActivity().startActivity(intent);
+				startActivity(intent);
 			}
 		});
 
