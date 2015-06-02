@@ -137,7 +137,7 @@ public class ForecastFragment extends Fragment {
 				SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
 				
 				// Using user's DefaultSharedPrefs location for this context that you created, instead of hardcoded number.
-				String location = sharedPreferences.getString(getString(R.string.pref_location_key), "94043");
+				String location = sharedPreferences.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
 				new FetchWeatherTask().execute(location);  // String passed into doInBackground()
 				return true;
 			default:
