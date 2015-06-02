@@ -18,7 +18,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -34,6 +36,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -44,6 +47,7 @@ public class ForecastFragment extends Fragment {
 	// Package name ensures keys are unique in case interacts with other apps.
 	public final static String EXTRA_MESSAGE ="com.vrj.udacity.sunshine.app.MESSAGE";
 	private ArrayAdapter<String> mForecastAdapter = null;
+	public static final String PREFS_NAME = "pref_location_key";
 	
 	public ForecastFragment() {
 	}
@@ -129,6 +133,12 @@ public class ForecastFragment extends Fragment {
 		
 		switch(item.getItemId()) {
 			case R.id.action_refresh:
+				// No idea where PREFS_NAME came from, but may work.  Usually use private
+				SharedPreferences sharedPreferences = getActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+				
+				// Using user's SharedPrefs location you created, instead of hardcoded number.
+				//Log.d("ForecastFragment", sharedPreferences.getString(getString(R.string.pref_location_key), ""));
+				Toast.makeText(getActivity(), sharedPreferences.getString(getString(R.string.pref_location_default), "BBB"), Toast.LENGTH_LONG).show();				
 				new FetchWeatherTask().execute("94043");  // String passed into doInBackground()
 				return true;
 			default:
