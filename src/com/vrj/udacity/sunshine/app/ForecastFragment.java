@@ -24,6 +24,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.text.format.Time;
 import android.util.Log;
@@ -47,7 +48,6 @@ public class ForecastFragment extends Fragment {
 	// Package name ensures keys are unique in case interacts with other apps.
 	public final static String EXTRA_MESSAGE ="com.vrj.udacity.sunshine.app.MESSAGE";
 	private ArrayAdapter<String> mForecastAdapter = null;
-	public static final String PREFS_NAME = "pref_location_key";
 	
 	public ForecastFragment() {
 	}
@@ -133,13 +133,12 @@ public class ForecastFragment extends Fragment {
 		
 		switch(item.getItemId()) {
 			case R.id.action_refresh:
-				// No idea where PREFS_NAME came from, but may work.  Usually use private
-				SharedPreferences sharedPreferences = getActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+				// MUST use PREFERENCEMANAGER.getDEFAULTSharedPreferences, will get DEFAULT preference file for this Context
+				SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
 				
-				// Using user's SharedPrefs location you created, instead of hardcoded number.
-				//Log.d("ForecastFragment", sharedPreferences.getString(getString(R.string.pref_location_key), ""));
-				Toast.makeText(getActivity(), sharedPreferences.getString(getString(R.string.pref_location_default), "BBB"), Toast.LENGTH_LONG).show();				
-				new FetchWeatherTask().execute("94043");  // String passed into doInBackground()
+				// Using user's DefaultSharedPrefs location for this context that you created, instead of hardcoded number.
+				String location = sharedPreferences.getString(getString(R.string.pref_location_key), "94043");
+				new FetchWeatherTask().execute(location);  // String passed into doInBackground()
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);
