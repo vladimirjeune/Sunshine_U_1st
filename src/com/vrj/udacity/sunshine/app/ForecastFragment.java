@@ -67,22 +67,6 @@ public class ForecastFragment extends Fragment {
 		View rootView = inflater.inflate(R.layout.fragment_main, container,
 				false);
 		
-		String[] forecastArray = {
-				"Today Ð Sunny Ð 83 / 66",
-				"Tomorrow Ð Sunny Ð 73 / 65",
-				"Sunday Ð Sunny Ð 63 / 56",
-				"Monday Ð Cloudy Ð 76 / 46",
-				"Tuesday Ð Partly Cloudy Ð 59 / 56",
-				"Wednesday Ð Misty Ð 64 / 61",
-				"Thursday Ð Clear Ð 80 / 69",
-				"Friday Ð Foggy Ð 81 / 67",
-				"Saturday Ð Partly Sunny Ð 78 / 56"
-				
-		};
-		
-		List<String> weekforecast = new ArrayList<String>(
-				Arrays.asList(forecastArray));
-		
 		mForecastAdapter = new ArrayAdapter<String>(
 				// The current context (this fragment's parent activity.)
 				this.getActivity(),
@@ -91,7 +75,7 @@ public class ForecastFragment extends Fragment {
 				// ID of the textview to populate
 				R.id.list_item_forecast_textview,
 				// Forecast data as a list
-				weekforecast);
+				new ArrayList<String>());
 		
 		// From the root of the Layout Hierarchy find the element you are looking for.
 		ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
@@ -133,18 +117,35 @@ public class ForecastFragment extends Fragment {
 		
 		switch(item.getItemId()) {
 			case R.id.action_refresh:
-				// MUST use PREFERENCEMANAGER.getDEFAULTSharedPreferences, will get DEFAULT preference file for this Context
-				SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-				
-				// Using user's DefaultSharedPrefs location for this context that you created, instead of hardcoded number.
-				String location = sharedPreferences.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
-				new FetchWeatherTask().execute(location);  // String passed into doInBackground()
+			updateWeather();
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);
 			
 		}
 		
+	}
+
+	/**
+	 * UPDATEWEATHER - Updates the weather data with the weather from the location stored in the user's 
+	 * 		stored preferences.
+	 */
+	private void updateWeather() {
+		// MUST use PREFERENCEMANAGER.getDEFAULTSharedPreferences, will get DEFAULT preference file for this Context
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+		
+		// Using user's DefaultSharedPrefs location for this context that you created, instead of hardcoded number.
+		String location = sharedPreferences.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
+		new FetchWeatherTask().execute(location);  // String passed into doInBackground()
+	}
+	
+	/**
+	 * ONSTART - Occurs immediately after onCreate()
+	 */
+	@Override
+	public void onStart() {
+		super.onStart();
+		updateWeather();
 	}
 	
 	/**
