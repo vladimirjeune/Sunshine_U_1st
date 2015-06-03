@@ -136,7 +136,8 @@ public class ForecastFragment extends Fragment {
 		
 		// Using user's DefaultSharedPrefs location for this context that you created, instead of hardcoded number.
 		String location = sharedPreferences.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
-		new FetchWeatherTask().execute(location);  // String passed into doInBackground()
+		String temperature = sharedPreferences.getString(getString(R.string.pref_temperature_key), getString(R.string.pref_temperature_default));
+		new FetchWeatherTask().execute(location, temperature);  // String passed into doInBackground()
 	}
 	
 	/**
@@ -188,7 +189,6 @@ public class ForecastFragment extends Fragment {
 	            final String QKEY_CNT   = "cnt";
 	            
 	            String value_mode   = "json";
-	            String value_units  = "metric";
 	            String value_cnt    = "7";
 	            
 	            Uri.Builder uriBuilder = new Uri.Builder();
@@ -198,7 +198,7 @@ public class ForecastFragment extends Fragment {
 	            	.path(PATH)
 	                .appendQueryParameter(QKEY_ZIP, params[0])
 	                .appendQueryParameter(QKEY_MODE, value_mode)
-	                .appendQueryParameter(QKEY_UNITS, value_units)
+	                .appendQueryParameter(QKEY_UNITS, params[1])
 	                .appendQueryParameter(QKEY_CNT, value_cnt);
 	            uriBuilder.build();
 

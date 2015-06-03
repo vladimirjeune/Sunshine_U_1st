@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="pref_temperature_units_key_array">
+        <item>@string/pref_temperature_metric_key</item>
+        <item>@string/pref_temperature_imperial_key</item>
+    </string-array>
+
+    <string-array name="pref_temperature_units_value_array">
+        <item>@string/pref_temperature_metric</item>
+        <item>@string/pref_temperature_imperial</item>
+    </string-array>
+    
+</resources>

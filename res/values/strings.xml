@@ -16,5 +16,23 @@
     
     <!-- DEFAULT postal code for location preference, so no translation, need this way for server [CHAR LIMIT=NONE] -->
     <string name="pref_location_default" translatable="false">94043</string>
+    
+    <!-- [CHAR LIMIT=30] -->
+    <string name="pref_temperature_label">Pick your units</string>
+    
+    <!-- [CHAR LIMIT=NONE] -->
+    <string name="pref_temperature_key" translatable="false">temperature</string>
+    
+    <!-- [CHAR LIMIT=NONE] -->
+    <string name="pref_temperature_default" translatable="false">metric</string>
+    
+    <!-- Strings for ListPreference Key choices [CHAR LIMIT=NONE] -->
+    <string name="pref_temperature_metric_key" translatable="false">metric</string>
+    <string name="pref_temperature_imperial_key" translatable="false">imperial</string>
+    
+    <!-- Strings for ListPreference Value choices [CHAR LIMIT=30] -->
+    <string name="pref_temperature_metric">Metric</string>
+    <string name="pref_temperature_imperial">Imperial</string>
+
 
 </resources>
