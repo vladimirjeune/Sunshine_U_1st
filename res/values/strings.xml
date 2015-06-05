@@ -21,7 +21,7 @@
     <string name="pref_temperature_label">Temperature Units</string>
     
     <!-- [CHAR LIMIT=NONE] -->
-    <string name="pref_temperature_key" translatable="false">temperature</string>
+    <string name="pref_temperature_key" translatable="false">units</string>
     
     <!-- [CHAR LIMIT=NONE] -->
     <string name="pref_temperature_default" translatable="false">metric</string>
