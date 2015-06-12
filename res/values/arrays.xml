@@ -11,13 +11,4 @@
         <item>@string/pref_temperature_imperial</item>
     </string-array>
 
-    <string-array name="pref_map_key_array">
-    <item>@string/pref_map_true_key</item>
-    <item>@string/pref_map_false_key</item>
-    </string-array>
-
-    <string-array name="pref_map_value_array">
-        <item>@string/pref_map_true_label</item>
-        <item>@string/pref_map_false_label</item>
-    </string-array>
 </resources>

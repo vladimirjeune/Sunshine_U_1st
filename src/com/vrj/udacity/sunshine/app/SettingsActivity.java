@@ -34,7 +34,7 @@ public class SettingsActivity extends PreferenceActivity
         // TODO: Add preferences
         bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_location_key)));
         bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_temperature_key)));
-        bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_map_key)));
+
     }
  
     /**
@@ -65,32 +65,6 @@ public class SettingsActivity extends PreferenceActivity
             int prefIndex = listPreference.findIndexOfValue(stringValue);
             if (prefIndex >= 0) {
                 preference.setSummary(listPreference.getEntries()[prefIndex]);
-            }
-            
-            if (preference.getKey() == getString(R.string.pref_map_key)) {
-            	if (listPreference.getEntryValues()[prefIndex].equals(getString(R.string.pref_map_true_key))) {
-            		
-            		// Find User's preferred location
-            		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-            		String location = sharedPreferences.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
-            		
-            		
-            		// Make URI
-            		String geolocation = "geo:0,0";
-            		Uri geoURI = Uri.parse(geolocation)
-            				.buildUpon()
-            				.appendQueryParameter("q", location)
-            				.build();
-            		// TODO: You want to construct URI, Add Intent to Android .Setting xml, get map to show up.
-            		
-            		// Make intent with URI data
-            	    Intent intent = new Intent(Intent.ACTION_VIEW);
-            	    intent.setData(geoURI);
-
-            	    if (intent.resolveActivity(getPackageManager()) != null) {
-            	        startActivity(intent);
-            	    }
-            	}
             }
             
         } else {

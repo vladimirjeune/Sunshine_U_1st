@@ -15,11 +15,5 @@
         android:entries="@array/pref_temperature_units_value_array"  
         android:entryValues="@array/pref_temperature_units_key_array"
         android:defaultValue="@string/pref_temperature_default" />
-    <ListPreference
-        android:key="@string/pref_map_key"
-        android:title="@string/pref_map_label"
-        android:entries="@array/pref_map_value_array"  
-        android:entryValues="@array/pref_map_key_array"
-        android:defaultValue="@string/pref_map_default" />
     
 </PreferenceScreen>
