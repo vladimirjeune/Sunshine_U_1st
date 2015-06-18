@@ -36,6 +36,9 @@
 	
 	<!-- For the Map action -->
 	<string name="action_map">Map Location</string>
+	
+	<!-- For the Share option on Details -->
+	<string name="action_share">Share</string>
     
 
 
