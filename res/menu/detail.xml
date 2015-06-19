@@ -9,10 +9,4 @@
         android:title="@string/action_settings"
         app:showAsAction="never"/>
     
-    <!-- showAsAction, and actionProviderClass need to belong to app.  Not yet sure why -->
-    <item android:id="@+id/action_share"
-        android:title="@string/action_share"
-        app:showAsAction="ifRoom"
-        app:actionProviderClass="android.support.v7.widget.ShareActionProvider" />
-
 </menu>
