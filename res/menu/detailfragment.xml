@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android" 
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <!-- Added new menu to display in options -->
+    <!-- Added the Android namesspace used by Android support library for its Widget XML -->
+    
+    <item android:id="@+id/action_share"
+        android:title="@string/action_share"
+        app:showAsAction="always" 
+        app:actionProviderClass="android.support.v7.widget.ShareActionProvider" />
+    <!-- Support Library allows ShareActionProvider to be used on Androids less than 4.0 -->
+
+</menu>

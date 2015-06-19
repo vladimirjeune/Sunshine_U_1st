@@ -26,7 +26,7 @@ public class DetailActivity extends ActionBarActivity {
 		
 		if (savedInstanceState == null) {
 			getSupportFragmentManager().beginTransaction()
-					.add(R.id.container, new PlaceholderFragment()).commit();
+					.add(R.id.container, new DetailFragment()).commit();
 		}
 
 	}
@@ -58,11 +58,11 @@ public class DetailActivity extends ActionBarActivity {
 	/**
 	 * A placeholder fragment containing a simple view.
 	 */
-	public static class PlaceholderFragment extends Fragment {
-		public static final String TAG = "PlaceholderFragment";
+	public static class DetailFragment extends Fragment {
+		public static final String LOG_TAG = DetailFragment.class.getSimpleName();
 	    private ShareActionProvider mShareActionProvider;
-		private final String HASHTAG = "#SunshineApp";
-		private String forecast = "";
+		private final String FORECAST_SHARE_HASHTAG = " #SunshineApp";
+		private String mForecastStr = "";
 		
 		
 		/* (non-Javadoc)
@@ -72,29 +72,29 @@ public class DetailActivity extends ActionBarActivity {
 		public void onCreate(Bundle savedInstanceState) {
 			// TODO Auto-generated method stub
 			super.onCreate(savedInstanceState);
-			setHasOptionsMenu(true);  // This Fragment has Options to add to the Options Menu
 		}
 
 		
-		public PlaceholderFragment() {
+		public DetailFragment() {
+			setHasOptionsMenu(true);  // This Fragment has Options to add to the Options Menu
 		}
 
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
 			
-			// Get the intent that started this activity
-			Intent intent = getActivity().getIntent();
 			View rootView = inflater.inflate(R.layout.fragment_detail,
 					container, false);
 			
+			// Get the intent that started this activity
+			Intent intent = getActivity().getIntent();
+			
 			// Check for intent and extras
 			if ( (intent != null) && (intent.hasExtra(Intent.EXTRA_TEXT))) {
-				forecast = intent.getStringExtra(Intent.EXTRA_TEXT);  // You sent text as the extra
-				((TextView) rootView.findViewById(R.id.detail_text)).setText(forecast) ;  // find the textView in the fragment_detail and set it.
+				mForecastStr = intent.getStringExtra(Intent.EXTRA_TEXT);  // You sent text as the extra
+				((TextView) rootView.findViewById(R.id.detail_text))
+					.setText(mForecastStr) ;  // find the textView in the fragment_detail and set it.
 			}
-			
-			setShareIntent(setTextIntentToShare(forecast + " " + HASHTAG));
 			
 			return rootView;
 		}
@@ -105,73 +105,42 @@ public class DetailActivity extends ActionBarActivity {
 		@Override
 		public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 			
-			Log.i(TAG, "onCreateOptionsMenu enter");			
-			// Inflate menu resource file
-			inflater.inflate(R.menu.detail, menu);
+			// Inflate menu.  Adds items to action bar if it is present
+			inflater.inflate(R.menu.detailfragment, menu);
 			
-			MenuItem item = menu.findItem(R.id.action_share);
+			// Retrieve share action menu
+			MenuItem menuItem = menu.findItem(R.id.action_share);
 
-			mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
-//			mShareActionProvider.setShareIntent(getDefaultIntent());  // Removed on purpose
-			super.onCreateOptionsMenu(menu, inflater);
-			Log.i(TAG, "onCreateOptionsMenu exit");			
+			// Get provider and hold on to set/change the share intent
+			mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
 			
-		}
-		
-		/* (non-Javadoc)
-		 * @see android.support.v4.app.Fragment#onPrepareOptionsMenu(android.view.Menu)
-		 * Gets called when Menu is to be presented.  onCreateOptions happens only once
-		 */
-		@Override
-		public void onPrepareOptionsMenu(Menu menu) {
-			// TODO Auto-generated method stub
-			
-			Log.i(TAG, "onPrepareOptionsMenu enter");			
-			// Called every time because each DetailActivity has different data to SEND
-			setShareIntent(setTextIntentToShare(forecast + " " + HASHTAG));
-			Log.i(TAG, "onPrepareOptionsMenu exit");	
-			
-			super.onPrepareOptionsMenu(menu);
-		}
-
-
-		/**
-		 * SETTEXTINTENTTOSHARE - will return an Intent set with the text that we want to share
-		 * @param String - text - text to be sent through the Intent 
-		 */
-		private Intent setTextIntentToShare(String text) {
-			
-			// Type of Action
-			Intent intent = new Intent(Intent.ACTION_SEND);
-			
-			// Text to send [KEY:VALUE]
-			intent.putExtra(Intent.EXTRA_TEXT, text);
-			
-			// Set MimeType
-			intent.setType("text/plain");
-			
-			return intent;
-		}
-		
-		/**
-		 * SETSHAREINTENT - Call this to update Share Intent
-		 * @param shareIntent
-		 */
-		private void setShareIntent(Intent shareIntent) {
+			// Attach an Intent to the ShareActionProvider.  Can update at any time.  
+			// Such as when the user selects a new piece of data they'd like to send.
 			if (mShareActionProvider != null) {
-				mShareActionProvider.setShareIntent(shareIntent);
+				mShareActionProvider.setShareIntent(createShareIntent());
+			} else {
+				Log.d(LOG_TAG, "Share Action Provider is null?");
 			}
+			
 		}
 		
+
 		/**
-		 * GETDEFAULTINTENT - will return an intent with a default value to initialize provider.  
-		 * As soon as actual intentions are known mShareActionProvider.setShareIntent() should be called.
-		 * @return
+		 * CREATESHAREFORECASTINTENT - 
 		 */
-		private Intent getDefaultIntent() {
-			Intent intent = new Intent(Intent.ACTION_SEND);
-			intent.setType("text/plain");
-			return intent;
+		private Intent createShareIntent() {
+			Intent shareIntent = new Intent(Intent.ACTION_SEND);
+			
+			// Says to not put the app we are sharing to on the call stack.  So if we 
+			// click our apps icon later we are brought to our app and not the app
+			// that we were sharing too!
+			shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+			
+			shareIntent.setType("text/plain");
+			shareIntent.putExtra(Intent.EXTRA_TEXT, mForecastStr 
+					+ FORECAST_SHARE_HASHTAG);
+			
+			return shareIntent;
 		}
 		
 	}
