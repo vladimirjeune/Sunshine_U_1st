@@ -61,7 +61,7 @@ public class DetailActivity extends ActionBarActivity {
 	public static class DetailFragment extends Fragment {
 		public static final String LOG_TAG = DetailFragment.class.getSimpleName();
 	    private ShareActionProvider mShareActionProvider;
-		private final String FORECAST_SHARE_HASHTAG = " #SunshineApp";
+		private static final String FORECAST_SHARE_HASHTAG = " #SunshineApp";
 		private String mForecastStr = "";
 		
 		
@@ -70,7 +70,6 @@ public class DetailActivity extends ActionBarActivity {
 		 */
 		@Override
 		public void onCreate(Bundle savedInstanceState) {
-			// TODO Auto-generated method stub
 			super.onCreate(savedInstanceState);
 		}
 
