@@ -118,57 +118,62 @@ public class TestDb extends AndroidTestCase {
     	String testCityName = "North Pole";
     	double testLatitude = 64.7488;
     	double testLongitude = -147.353;
-    	
-    	SQLiteDatabase db = null;
-    	Cursor locationCursor = null;
-    	
-    	try {
-    		// First step: Get reference to writable database
-    		WeatherDbHelper wdbh = new WeatherDbHelper(getContext());
-    		db = wdbh.getWritableDatabase();
 
-    		// Create ContentValues of what you want to insert
-    		ContentValues cv = new ContentValues();
+    	// STEP 1: Get reference to writable database
+    	// If there's an error in those massive SQL table creation Strings,
+    	// errors will be thrown here when you try to get a writable database.
+    	WeatherDbHelper wdbh = new WeatherDbHelper(getContext());
+    	SQLiteDatabase db = wdbh.getWritableDatabase();
 
-    		// (you can use the TestUtilities.createNorthPoleLocationValues if you wish)
-    		cv.put(LocationEntry.COLUMN_CITY_NAME, testCityName);
-    		cv.put(LocationEntry.COLUMN_LOCATION_SETTING, testLocationSetting);
-    		cv.put(LocationEntry.COLUMN_COORD_LAT, testLatitude);
-    		cv.put(LocationEntry.COLUMN_COORD_LONG, testLongitude);
+    	// STEP 2: Create ContentValues of what you want to insert
+    	ContentValues cv = new ContentValues();
 
-    		// Insert ContentValues into database and get a row ID back
-    		long locationRowId = db.insert(LocationEntry.TABLE_NAME, null, cv);
+    	// (you can use the TestUtilities.createNorthPoleLocationValues if you wish)
+    	cv.put(LocationEntry.COLUMN_CITY_NAME, testCityName);
+    	cv.put(LocationEntry.COLUMN_LOCATION_SETTING, testLocationSetting);
+    	cv.put(LocationEntry.COLUMN_COORD_LAT, testLatitude);
+    	cv.put(LocationEntry.COLUMN_COORD_LONG, testLongitude);
 
-    		// Insert successful
-    		if (locationRowId != -1) {
+    	// STEP 3: Insert ContentValues into database and get a row ID back
+    	long locationRowId = db.insert(LocationEntry.TABLE_NAME, null, cv);
 
-    			// Query the database and receive a Cursor back
-    			// Just giving the table name should be similar to 
-    			// SELECT * FROM TABLENAME;
-    			locationCursor = db.query(LocationEntry.TABLE_NAME, null
-    					, null, null, null, null, null);
+    	// Verify we get a row back
+    	assertTrue(locationRowId != -1);
 
-    			// Move the cursor to a valid database row, if there is a row, continue
-    			if ( false != locationCursor.moveToFirst() ) {
-    				// Validate data in resulting Cursor with the original ContentValues
-    				// (you can use the validateCurrentRecord function in TestUtilities to validate the
-    				// query if you like)
-    				TestUtilities.validateCurrentRecord("", locationCursor, cv);
-    			}
+    	// Data's inserted.  IN THEORY.  Now pull some out to stare at it and verify it made
+    	// the round trip.
+
+    	// STEP 4: Query the database and receive a Cursor back
+    	// A cursor is your primary interface to the query results.
+    	// Just giving the table name should be similar to 
+    	// SELECT * FROM TABLENAME;
+    	Cursor locationCursor = db.query(
+    			LocationEntry.TABLE_NAME, // Table we are querying
+    			null,  // all columns
+    			null,  // Columns of WHERE 
+    			null,  // Values for the WHERE
+    			null,  // Columns to FILTER by Row Groups
+    			null,  // Sort order
+    			null);
+
+    	// Move the cursor to a valid database row and check to see if we got any records back
+    	// from the query
+    	assertTrue("Error: No Records returned from location query", locationCursor.moveToFirst());
+
+    	// STEP 5: Validate data in resulting Cursor with the original ContentValues
+    	// (you can use the validateCurrentRecord function in TestUtilities to validate the
+    	// query if you like)
+    	TestUtilities.validateCurrentRecord("Error: Location Query Validation Failed", locationCursor, cv);
 
 
-    		}
-    	} finally {
-    		// Finally, close the cursor and database
-    		if ( true == locationCursor.isClosed() ) {
-    			locationCursor.close();
-    		}
-    		
-    		if ( true == db.isOpen() ) {
-    			db.close();
-    		}
-    	}
-    	
+    	// Finally, close the cursor and database
+    	// Move the cursor to demonstrate that there is only one record in the database
+    	assertFalse("Error: More than one record returned from location query", 
+    			locationCursor.moveToNext());
+
+    	// STEP 6: Finally, close the cursor and database
+    	locationCursor.close();
+    	db.close();
 
     }
 
