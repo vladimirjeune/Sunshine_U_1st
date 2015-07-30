@@ -12,7 +12,8 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.test.AndroidTestCase;
-import androidTest.java.com.vrj.udacity.sunshine.app.utils.PollingCheck;
+
+import com.vrj.udacity.sunshine.app.utils.PollingCheck;
 
 /*
     Students: These are functions and some test data to make it easier to test your database and
