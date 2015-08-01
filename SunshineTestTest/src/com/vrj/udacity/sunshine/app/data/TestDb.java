@@ -15,7 +15,6 @@
  */
 package com.vrj.udacity.sunshine.app.data;
 
-import java.util.Date;
 import java.util.HashSet;
 
 import android.content.ContentValues;
