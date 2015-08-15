@@ -117,14 +117,29 @@ public class WeatherProvider extends ContentProvider {
     static UriMatcher buildUriMatcher() {
         // 1) The code passed into the constructor represents the code to return for the root
         // URI.  It's common to use NO_MATCH as the code for this case. Add the constructor below.
-
+    	UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
         // 2) Use the addURI function to match each of the types.  Use the constants from
         // WeatherContract to help define the types to the UriMatcher.
+    	
+    	// "content://com.vrj.udacity.sunshine.app/weather" return 100
+    	uriMatcher.addURI(WeatherContract.CONTENT_AUTHORITY
+    			, WeatherContract.PATH_WEATHER, WEATHER);
+    	
+    	// "content://com.vrj.udacity.sunshine.app/weather/*" return 101
+    	uriMatcher.addURI(WeatherContract.CONTENT_AUTHORITY
+    			, WeatherContract.PATH_WEATHER + "/*", WEATHER_WITH_LOCATION);
 
-
+    	// "content://com.vrj.udacity.sunshine.app/weather/*/#" return 102
+    	uriMatcher.addURI(WeatherContract.CONTENT_AUTHORITY
+    			, WeatherContract.PATH_WEATHER + "/*/#", WEATHER_WITH_LOCATION_AND_DATE);
+    	
+    	// "content://com.vrj.udacity.sunshine.app/location" return 300
+    	uriMatcher.addURI(WeatherContract.CONTENT_AUTHORITY
+    			, WeatherContract.PATH_LOCATION, LOCATION);
+    	
         // 3) Return the new matcher!
-        return null;
+        return uriMatcher;
     }
 
     /*

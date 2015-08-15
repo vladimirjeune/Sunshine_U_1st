@@ -145,7 +145,7 @@ public class WeatherContract {
          * BUILDWEATHERLOCATION - build up URI for location
          */
         public static Uri buildWeatherLocation(String locationSetting) {
-        	// TODO: Student: Fill in this buildWeatherLocation function
+        	// TODO: Student: FillED in this buildWeatherLocation function
             return CONTENT_URI.buildUpon().appendPath(locationSetting).build() ;
         }
 
