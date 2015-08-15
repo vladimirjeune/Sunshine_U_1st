@@ -322,7 +322,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
 
         try {
             // Construct the URL for the OpenWeatherMap query
-            // Possible parameters are avaiable at OWM's forecast API page, at
+            // Possible parameters are available at OWM's forecast API page, at
             // http://openweathermap.org/API#forecast
             final String FORECAST_BASE_URL =
                     "http://api.openweathermap.org/data/2.5/forecast/daily?";

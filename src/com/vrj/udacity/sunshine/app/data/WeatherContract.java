@@ -61,7 +61,17 @@ public class WeatherContract {
         done for WeatherEntry)
      */
     public static final class LocationEntry implements BaseColumns {
-        public static final String TABLE_NAME = "location";
+
+    	public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_LOCATION).build();
+
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_LOCATION;
+
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_LOCATION;
+    	
+    	public static final String TABLE_NAME = "location";
         
         // Location setting string is what will be sent to OWM as the location query
         public static final String COLUMN_LOCATION_SETTING = "location_setting";
@@ -73,16 +83,9 @@ public class WeatherContract {
         // To pinpoint the location on the map when we launch the map intent.
         // We store the lat/lon as returned from OpenWeatherMap.
         public static final String COLUMN_COORD_LAT= "coord_lat";
-        public static final String COLUMN_COORD_LONG= "coord_long";
-        
-        public static final Uri CONTENT_URI =
-                BASE_CONTENT_URI.buildUpon().appendPath(PATH_LOCATION).build();
 
-        public static final String CONTENT_TYPE =
-                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_LOCATION;
-        public static final String CONTENT_ITEM_TYPE =
-                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_LOCATION;
-                
+        public static final String COLUMN_COORD_LONG= "coord_long";
+                        
         public static Uri buildLocationUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
@@ -121,15 +124,19 @@ public class WeatherContract {
         // Degrees are meteorological degrees (e.g, 0 is north, 180 is south).  Stored as floats.
         public static final String COLUMN_DEGREES = "degrees";
         
+        // content://com.xxx.xxx.xxx.app/weather
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_WEATHER).build();
 
+        // Getting the list of data that we want
         public static final String CONTENT_TYPE =
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_WEATHER;
+        
+        // Getting the single data that we want
         public static final String CONTENT_ITEM_TYPE =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_WEATHER;
 
-
+        // Function helps to build the URI queries
         public static Uri buildWeatherUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
