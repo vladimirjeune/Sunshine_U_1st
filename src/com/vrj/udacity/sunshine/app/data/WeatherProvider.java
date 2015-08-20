@@ -162,12 +162,14 @@ public class WeatherProvider extends ContentProvider {
 
         switch (match) {
             // Student: Uncomment and fill out these two cases
-//            case WEATHER_WITH_LOCATION_AND_DATE:
-//            case WEATHER_WITH_LOCATION:
+        	case WEATHER_WITH_LOCATION_AND_DATE:
+        		return WeatherContract.WeatherEntry.CONTENT_ITEM_TYPE;  // Item Type, specific day
+            case WEATHER_WITH_LOCATION:
+            	return WeatherContract.WeatherEntry.CONTENT_TYPE;  // Dir Type, weather for wk
             case WEATHER:
-                return WeatherContract.WeatherEntry.CONTENT_TYPE;
+                return WeatherContract.WeatherEntry.CONTENT_TYPE;  // Dir Type
             case LOCATION:
-                return WeatherContract.LocationEntry.CONTENT_TYPE;
+                return WeatherContract.LocationEntry.CONTENT_TYPE;  // Dir Type
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
