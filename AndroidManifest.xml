@@ -15,6 +15,10 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+        <provider 
+            android:authorities="com.vrj.udacity.sunshine.app"
+            android:name=".data.WeatherProvider" >
+        </provider>
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name" >
