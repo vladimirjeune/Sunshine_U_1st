@@ -36,9 +36,11 @@ public class WeatherProvider extends ContentProvider {
     static final int LOCATION = 300;
 
     private static final SQLiteQueryBuilder sWeatherByLocationSettingQueryBuilder;
+    private static final SQLiteQueryBuilder sLocationQueryBuilder;
 
     static{
         sWeatherByLocationSettingQueryBuilder = new SQLiteQueryBuilder();
+        sLocationQueryBuilder = new SQLiteQueryBuilder();
         
         //This is an inner join which looks like
         //weather INNER JOIN location ON weather.location_id = location._id
@@ -49,6 +51,11 @@ public class WeatherProvider extends ContentProvider {
                         "." + WeatherContract.WeatherEntry.COLUMN_LOC_KEY +
                         " = " + WeatherContract.LocationEntry.TABLE_NAME +
                         "." + WeatherContract.LocationEntry._ID);
+        
+        // These basically act as the FROM table in the SQLite stmt
+        // This just says:
+        // location
+        sLocationQueryBuilder.setTables(WeatherContract.LocationEntry.TABLE_NAME);
     }
 
     //location.location_setting = ?
@@ -68,6 +75,13 @@ public class WeatherProvider extends ContentProvider {
                     "." + WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING + " = ? AND " +
                     WeatherContract.WeatherEntry.COLUMN_DATE + " = ? ";
 
+    /**
+     * GETWEATHERBYLOCATIONSETTING - will return a Cursor based on setting
+     * @param uri
+     * @param projection
+     * @param sortOrder
+     * @return
+     */
     private Cursor getWeatherByLocationSetting(Uri uri, String[] projection, String sortOrder) {
         String locationSetting = WeatherContract.WeatherEntry.getLocationSettingFromUri(uri);
         long startDate = WeatherContract.WeatherEntry.getStartDateFromUri(uri);
@@ -92,7 +106,15 @@ public class WeatherProvider extends ContentProvider {
                 sortOrder
         );
     }
-
+    
+    /**
+     * GETWEATHERBYLOCATIONSETTINGANDDATE - will return a Cursor based on setting and date 
+     * 
+     * @param uri
+     * @param projection
+     * @param sortOrder
+     * @return
+     */
     private Cursor getWeatherByLocationSettingAndDate(
             Uri uri, String[] projection, String sortOrder) {
         String locationSetting = WeatherContract.WeatherEntry.getLocationSettingFromUri(uri);
@@ -108,7 +130,29 @@ public class WeatherProvider extends ContentProvider {
         );
     }
 
-    /*
+    private Cursor getWeather(Uri uri) {
+		return sWeatherByLocationSettingQueryBuilder.query(mOpenHelper.getReadableDatabase(), 
+				null, 
+				null, 
+				null, 
+				null, 
+				null, 
+				null
+				);
+	}
+
+	private Cursor getLocation(Uri uri) {
+		return sLocationQueryBuilder.query(mOpenHelper.getReadableDatabase(), 
+				null, 
+				null, 
+				null, 
+				null, 
+				null, 
+				null
+				);
+	}
+
+	/*
         Students: Here is where you need to create the UriMatcher. This UriMatcher will
         match each URI to the WEATHER, WEATHER_WITH_LOCATION, WEATHER_WITH_LOCATION_AND_DATE,
         and LOCATION integer constants defined above.  You can test this by uncommenting the
@@ -195,18 +239,20 @@ public class WeatherProvider extends ContentProvider {
             }
             // "weather"
             case WEATHER: {
-                retCursor = null;
+                retCursor = getWeather(uri);
                 break;
             }
             // "location"
             case LOCATION: {
-                retCursor = null;
+                retCursor = getLocation(uri);
                 break;
             }
 
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
+        
+        // 
         retCursor.setNotificationUri(getContext().getContentResolver(), uri);
         return retCursor;
     }
