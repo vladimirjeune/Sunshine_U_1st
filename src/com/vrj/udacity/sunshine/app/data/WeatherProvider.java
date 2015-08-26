@@ -36,11 +36,9 @@ public class WeatherProvider extends ContentProvider {
     static final int LOCATION = 300;
 
     private static final SQLiteQueryBuilder sWeatherByLocationSettingQueryBuilder;
-    private static final SQLiteQueryBuilder sLocationQueryBuilder;
 
     static{
         sWeatherByLocationSettingQueryBuilder = new SQLiteQueryBuilder();
-        sLocationQueryBuilder = new SQLiteQueryBuilder();
         
         //This is an inner join which looks like
         //weather INNER JOIN location ON weather.location_id = location._id
@@ -52,10 +50,6 @@ public class WeatherProvider extends ContentProvider {
                         " = " + WeatherContract.LocationEntry.TABLE_NAME +
                         "." + WeatherContract.LocationEntry._ID);
         
-        // These basically act as the FROM table in the SQLite stmt
-        // This just says:
-        // location
-        sLocationQueryBuilder.setTables(WeatherContract.LocationEntry.TABLE_NAME);
     }
 
     //location.location_setting = ?
@@ -130,28 +124,7 @@ public class WeatherProvider extends ContentProvider {
         );
     }
 
-    private Cursor getWeather(Uri uri) {
-		return sWeatherByLocationSettingQueryBuilder.query(mOpenHelper.getReadableDatabase(), 
-				null, 
-				null, 
-				null, 
-				null, 
-				null, 
-				null
-				);
-	}
-
-	private Cursor getLocation(Uri uri) {
-		return sLocationQueryBuilder.query(mOpenHelper.getReadableDatabase(), 
-				null, 
-				null, 
-				null, 
-				null, 
-				null, 
-				null
-				);
-	}
-
+    
 	/*
         Students: Here is where you need to create the UriMatcher. This UriMatcher will
         match each URI to the WEATHER, WEATHER_WITH_LOCATION, WEATHER_WITH_LOCATION_AND_DATE,
@@ -239,16 +212,28 @@ public class WeatherProvider extends ContentProvider {
             }
             // "weather"
             case WEATHER: {
-                retCursor = getWeather(uri);
+                retCursor = mOpenHelper.getReadableDatabase().query(WeatherContract.WeatherEntry.TABLE_NAME, 
+                		projection, 
+                		selection, 
+                		selectionArgs, 
+                		null, 
+                		null, 
+                		sortOrder);  // We only need FROM 1 table
                 break;
             }
             // "location"
             case LOCATION: {
-                retCursor = getLocation(uri);
+                retCursor = mOpenHelper.getReadableDatabase().query(WeatherContract.LocationEntry.TABLE_NAME, 
+                		projection, 
+                		selection, 
+                		selectionArgs, 
+                		null, 
+                		null, 
+                		sortOrder);  // We only need FROM 1 table
                 break;
             }
 
-            default:
+            default:  // Causes Cursor to register ContentObserver; watch chgs in this uri and tell ui.
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
         
