@@ -261,9 +261,22 @@ public class WeatherProvider extends ContentProvider {
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 break;
             }
+            case LOCATION: {  // Go through base URI and add ContentValues, so base always notified
+            	long _id = db.insert(WeatherContract.LocationEntry.TABLE_NAME, null, values);
+            	
+            	if (_id > 0) {
+            		returnUri = WeatherContract.LocationEntry.buildLocationUri(_id);
+            	} else {
+            		throw new android.database.SQLException("Failed to insert row into " + uri);
+            	}
+            	
+            	break;
+            }
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
+        
+        // Using the ContentResolver to set a ContentObserver over the PASSED IN URI.
         getContext().getContentResolver().notifyChange(uri, null);
         return returnUri;
     }
@@ -284,6 +297,12 @@ public class WeatherProvider extends ContentProvider {
         return 0;
     }
 
+    /**
+     * NORMALIZEDATAE - apparently the content values passed in will have the dates in the wrong 
+     * 		format.  So this replaces that incorrect one with the corrected one, if there is a 
+     * 		date present.
+     * @param values
+     */
     private void normalizeDate(ContentValues values) {
         // normalize the date value
         if (values.containsKey(WeatherContract.WeatherEntry.COLUMN_DATE)) {
