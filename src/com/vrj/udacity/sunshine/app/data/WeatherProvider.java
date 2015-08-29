@@ -367,12 +367,16 @@ public class WeatherProvider extends ContentProvider {
         return retRows;
     }
 
+    /**
+     * BULKINSERT - will perform multiple inserts in a single transaction for more efficient
+     * 		use of resources.
+     */
     @Override
     public int bulkInsert(Uri uri, ContentValues[] values) {
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
         switch (match) {
-            case WEATHER:
+            case WEATHER:  // We are only doing Weather inserts in bulk.
                 db.beginTransaction();
                 int returnCount = 0;
                 try {
@@ -385,12 +389,12 @@ public class WeatherProvider extends ContentProvider {
                     }
                     db.setTransactionSuccessful();
                 } finally {
-                    db.endTransaction();
+                    db.endTransaction();  // This way transactions always ended
                 }
-                getContext().getContentResolver().notifyChange(uri, null);
+                getContext().getContentResolver().notifyChange(uri, null);  // Notify of change
                 return returnCount;
             default:
-                return super.bulkInsert(uri, values);
+                return super.bulkInsert(uri, values);  // Does not call inserts in a transaction
         }
     }
 
