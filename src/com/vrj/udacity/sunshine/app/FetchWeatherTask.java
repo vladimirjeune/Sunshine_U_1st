@@ -41,6 +41,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Vector;
 
+/**
+ * FETCHWEATHERTASK - AsyncTasks so .connect() does not step on the UIThread.
+ * You will pass in params[0] to URL and return modified JSON Strings
+ */
 public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
 
     private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
