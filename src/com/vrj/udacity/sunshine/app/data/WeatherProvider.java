@@ -288,6 +288,11 @@ public class WeatherProvider extends ContentProvider {
     	final int match = sUriMatcher.match(uri);
     	int retRows = 0;
 
+    	// This will make it so delete all rows will return the number of rows deleted
+    	if (null == selection) {
+    		selection = "1";
+    	}
+    	
         // Student: Use the uriMatcher to match the WEATHER and LOCATION URI's we are going to
         // handle.  If it doesn't match these, throw an UnsupportedOperationException.
     	switch (match) {
@@ -305,7 +310,7 @@ public class WeatherProvider extends ContentProvider {
         // the uri listeners (using the content resolver) if the rowsDeleted != 0 or the selection
         // is null.
         // Oh, and you should notify the listeners here.    	
-    	if ((selection == null) || (retRows != 0) ){
+    	if (retRows != 0) {
     		// Tell the ContentResolver about the change
     		getContext().getContentResolver().notifyChange(uri, null);
     	}
@@ -328,13 +333,20 @@ public class WeatherProvider extends ContentProvider {
         }
     }
 
+    /**
+     * UPDATE - Passes parameters to the database and returns the number of rows affected.
+     * @param - uri - URI - Proper URI of what we want to updatae
+     * @param - values - ContentValues - for the SET part of update.  Column - change
+     * @param - selection - String - for the WHERE clause with '?' that will be replaced by selArgs
+     * @param - selectionArgs - String[] - elements will replace '?' in the selection String
+     */
     @Override
     public int update(
             Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         // Student: This is a lot like the delete function.  We return the number of rows impacted
         // by the update.
     	final SQLiteDatabase db = mOpenHelper.getReadableDatabase();
-    	final int match = sUriMatcher.match(uri);
+    	final int match = sUriMatcher.match(uri);  // Using matcher to tell what to do by URI type
     	int retRows = 0;
     	
     	switch(match) {
@@ -344,7 +356,7 @@ public class WeatherProvider extends ContentProvider {
     		case LOCATION:
     			retRows += db.update(WeatherContract.LocationEntry.TABLE_NAME, values, selection, selectionArgs);
     			break;
-    		default:
+    		default:  // If do not understand URI; do nothing
     			throw new UnsupportedOperationException("Unknown uri: " + uri);
     	}
 
