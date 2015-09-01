@@ -29,6 +29,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -120,13 +121,15 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
     	
 		Cursor cursor = mContext.getContentResolver().query(
     			WeatherContract.LocationEntry.CONTENT_URI,  // location db
-    			null,  // We will pick the id out of the lot
-    			WeatherContract.LocationEntry.COLUMN_CITY_NAME + "= ?",  // Must add = ? param or will not match up
-    			new String[] {cityName}, 
+    			new String[] {WeatherContract.LocationEntry._ID},  // We want the ID column  
+    			WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING + "= ?",  // Must add = ? param or will not match up
+    			new String[] {locationSetting}, 
     			null);
     	
     	if (true == cursor.moveToFirst()) {  // If we got something back look for id
-    		retID = cursor.getLong(0);       // Return the ID
+    		// retID = cursor.getLong(0);       // Return the ID
+    		int location_index = cursor.getColumnIndex(WeatherContract.LocationEntry._ID);
+    		retID = cursor.getLong(location_index);
     	} else {  // Do an insert of the parameter values
     		
     		// Creation of ContentValues for insert
@@ -136,42 +139,22 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
     		cValues.put(WeatherContract.LocationEntry.COLUMN_COORD_LAT, lat);
     		cValues.put(WeatherContract.LocationEntry.COLUMN_COORD_LONG, lon);   		
     		
-    		// Insert new row
-    		mContext.getContentResolver().insert(WeatherContract.LocationEntry.CONTENT_URI, cValues);
+    		// Insert new location in db
+    		Uri insertedUri = mContext.getContentResolver().insert(
+    				WeatherContract.LocationEntry.CONTENT_URI, 
+    				cValues);
     		
-    		// Get row id of cityName just entered.  Optimize Later:
-    		retID = getId(cityName);   		
+    		// Extract the locationId from the Uri you got back from .insert().
+    		retID = ContentUris.parseId(insertedUri);
     		
     	}
+    	
+    	cursor.close();  // REMEMEBER to close your cursors.
     	
         return retID;
     }
 
-	/**
-	 * GETID - will return the id of the city name passed in if it exists
-	 * @param wp
-	 * @param cols_values
-	 * @return
-	 */
-	private Long getId(String cityName) {
-		
-		String[] cols_values = {cityName};
-		
-		Cursor cursor = mContext.getContentResolver().query(
-    			WeatherContract.LocationEntry.CONTENT_URI,  // location db
-    			null,  // We will pick the id out of the lot
-    			WeatherContract.LocationEntry.COLUMN_CITY_NAME + " = ?",  // Must add = ? param or will not match up
-    			cols_values, 
-    			null);
-		
-		if (cursor.moveToFirst()) {  // If this exists, tell us the ID
-			return cursor.getLong(0);
-		}
-		
-		return -1L;
-	}
-
-    /*
+	/*
         Students: This code will allow the FetchWeatherTask to continue to return the strings that
         the UX expects so that we can continue to test the application even once we begin using
         the database.
