@@ -105,15 +105,8 @@ public class MainActivity extends ActionBarActivity {
 	 * OPENPREFERREDLOCATIONINMAP - Created to give use option of seeing preferred location on map
 	 */
 	private void openPreferredLocationInMap(){
-		
-		// Obtain preferences from DefaultShared Preferences
-		SharedPreferences sharedPreferences = PreferenceManager
-				.getDefaultSharedPreferences(this);
-		
-		// Obtain location from sharedPreferences
-		String location = sharedPreferences.getString(
-				getString(R.string.pref_location_key),
-				getString(R.string.pref_location_default));
+				
+		String location = Utility.getPreferredLocation(this);
 		
 		// Using Scheme for geolocation data
 		String geoScheme = "geo:0,0?";

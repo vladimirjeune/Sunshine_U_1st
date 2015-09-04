@@ -5,8 +5,12 @@ package com.vrj.udacity.sunshine.app;
 
 import java.util.ArrayList;
 
+import com.vrj.udacity.sunshine.app.data.WeatherContract;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -28,7 +32,7 @@ import android.widget.ListView;
 public class ForecastFragment extends Fragment {
 	// Package name ensures keys are unique in case interacts with other apps.
 	public final static String EXTRA_MESSAGE ="com.vrj.udacity.sunshine.app.MESSAGE";
-	private ArrayAdapter<String> mForecastAdapter = null;
+	private ForecastAdapter mForecastAdapter = null;
 	
 	public ForecastFragment() {
 	}
@@ -44,46 +48,33 @@ public class ForecastFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 
+		
+		// Get data to populate ForecastFragment from DB
+		String locationSetting = Utility.getPreferredLocation(getActivity());
+		
+		// We want sort order ASCending by date
+		String sortOrder = WeatherContract.WeatherEntry.COLUMN_DATE + " ASC";
+		Uri weatherForLocationUri = WeatherContract.WeatherEntry
+				.buildWeatherLocationWithStartDate(locationSetting
+						, System.currentTimeMillis());
+		
+		Cursor cur = getActivity().getContentResolver().query(weatherForLocationUri
+				, null, null, null, sortOrder);
+		
+		// 0, no flags set
+		// The CursorAdapter will take data from our cursor and populate the ListView
+		// However, we cannot use FLAG_AUTO_REQUERY since it is deprecated, so we will end
+		// up with an empty list the first time we run.
+		mForecastAdapter = new ForecastAdapter(getActivity(), cur, 0);
+
 		// This is the root of the hierarchy.  No need to get yourself.
 		View rootView = inflater.inflate(R.layout.fragment_main, container,
 				false);
-		
-		mForecastAdapter = new ArrayAdapter<String>(
-				// The current context (this fragment's parent activity.)
-				this.getActivity(),
-				// ID of list item layout
-				R.layout.list_item_forecast,
-				// ID of the textview to populate
-				R.id.list_item_forecast_textview,
-				// Forecast data as a list
-				new ArrayList<String>());
-		
+
 		// From the root of the Layout Hierarchy find the element you are looking for.
 		ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
 		listView.setAdapter(mForecastAdapter);  // Binding ArrayAdapter to ListView
 		
-		// Setting setItemClickListener to show detail of item clicked.
-		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
-
-				// Got the string of the clicked item from mForecastAdapter
-				String forecast = mForecastAdapter.getItem(position);
-				
-				// Used getActivity() as the context, and used the correct words.  
-				// Gets Activity this Fragment is associated with.
-				Intent intent = new Intent(getActivity(), DetailActivity.class);
-				
-				// Msg to send with activity as Key:Value pair (string,forecast)
-				intent.putExtra(Intent.EXTRA_TEXT, forecast);
-				
-				// Have associated MainActivity start the DetailActivity with the forecast string as extra
-				startActivity(intent);
-			}
-		});
-
         return rootView;
     }
 	
@@ -112,12 +103,9 @@ public class ForecastFragment extends Fragment {
 	 * 		stored preferences.
 	 */
 	private void updateWeather() {
-		// MUST use PREFERENCEMANAGER.getDEFAULTSharedPreferences, will get DEFAULT preference file for this Context
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-		
-		// Using user's DefaultSharedPrefs location for this context that you created, instead of hardcoded number.
-		String location = sharedPreferences.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
-		new FetchWeatherTask(getActivity(), mForecastAdapter).execute(location);  // String passed into doInBackground()
+		FetchWeatherTask weatherTask = new FetchWeatherTask(getActivity()); 
+		String location = Utility.getPreferredLocation(getActivity());
+		weatherTask.execute(location); 
 	}
 	
 	/**
