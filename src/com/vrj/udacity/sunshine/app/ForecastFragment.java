@@ -28,7 +28,7 @@ import com.vrj.udacity.sunshine.app.data.WeatherContract;
 public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 	// Package name ensures keys are unique in case interacts with other apps.
 	public final static String EXTRA_MESSAGE ="com.vrj.udacity.sunshine.app.MESSAGE";
-	private final static int MY_LOADER_ID = 101;
+	private final static int FORECAST_LOADER_ID = 0;
 	private ForecastAdapter mForecastAdapter = null;
 	
 	public ForecastFragment() {
@@ -69,11 +69,10 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 	 */
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-		
         // Prepare the loader.  Either re-connect with an existing one,
         // or start a new one.
 		getLoaderManager().initLoader(0, null, this);
+		super.onActivityCreated(savedInstanceState);  // From instructor correction
 	}
 
 	@Override
