@@ -3,6 +3,7 @@
  */
 package com.vrj.udacity.sunshine.app;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.vrj.udacity.sunshine.app.data.WeatherContract;
@@ -88,6 +90,28 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
 		// From the root of the Layout Hierarchy find the element you are looking for.
 		ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
+		
+		// ListView will pass an URI need for the DetailView
+		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				
+				// CursorAdapter returns a cursor at the correct position for getItem(), or null
+				// if it cannot reach that position
+				Cursor cursor = (Cursor) parent.getItemAtPosition(position);
+				
+				if (null != cursor) {
+					String locationSetting = Utility.getPreferredLocation(getActivity());
+					Intent intent = new Intent(getActivity(), DetailActivity.class)
+						.setData(WeatherContract.WeatherEntry
+								.buildWeatherLocationWithDate(locationSetting, COL_WEATHER_DATE));
+					startActivity(intent);
+				}
+			}
+		});
+		
 		listView.setAdapter(mForecastAdapter);  // Binding ArrayAdapter to ListView
 		
         return rootView;
