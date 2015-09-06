@@ -88,7 +88,7 @@ public class DetailActivity extends ActionBarActivity {
 			// Get the intent that started this activity
 			Intent intent = getActivity().getIntent();
 			
-			// Check for intent and extras
+			// Check for intent
 			if ( intent != null) {
 				mForecastStr = intent.getDataString();  // You set Data using setData()
 			}
