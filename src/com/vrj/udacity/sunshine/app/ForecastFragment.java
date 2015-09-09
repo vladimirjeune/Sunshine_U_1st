@@ -125,7 +125,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 	public void onActivityCreated(Bundle savedInstanceState) {
         // Prepare the loader.  Either re-connect with an existing one,
         // or start a new one.
-		getLoaderManager().initLoader(0, null, this);
+		getLoaderManager().initLoader(FORECAST_LOADER_ID, null, this);
 		super.onActivityCreated(savedInstanceState);  // From instructor correction
 	}
 
