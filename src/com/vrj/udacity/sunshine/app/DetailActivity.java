@@ -90,7 +90,7 @@ public class DetailActivity extends ActionBarActivity {
 			
 			// Check for intent
 			if ( intent != null) {
-				mForecastStr = intent.getDataString();  // You set Data using setData()
+				mForecastStr = intent.getDataString();  // You set Data using setData(), for now data is URI
 			}
 			
 			if (null != mForecastStr) {
