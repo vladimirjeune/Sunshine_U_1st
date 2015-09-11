@@ -1,6 +1,10 @@
 package com.vrj.udacity.sunshine.app;
 
+import com.vrj.udacity.sunshine.app.data.WeatherContract;
+
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
@@ -14,6 +18,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 
 public class DetailActivity extends ActionBarActivity {
 
@@ -58,12 +65,37 @@ public class DetailActivity extends ActionBarActivity {
 	/**
 	 * A placeholder fragment containing a simple view.
 	 */
-	public static class DetailFragment extends Fragment {
+	public static class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 		public static final String LOG_TAG = DetailFragment.class.getSimpleName();
+		private static final int DETAIL_LOADER_ID = 10;  // Loader ids MUST be unique
 	    private ShareActionProvider mShareActionProvider;
 		private static final String FORECAST_SHARE_HASHTAG = " #SunshineApp";
 		private String mForecastStr = "";
+		private TextView tv = null;
 		
+		private static final String[] DETAIL_COLUMNS = {
+			WeatherContract.WeatherEntry.TABLE_NAME + "." + WeatherContract.WeatherEntry._ID,
+			WeatherContract.WeatherEntry.COLUMN_DATE,
+			WeatherContract.WeatherEntry.COLUMN_SHORT_DESC,
+			WeatherContract.WeatherEntry.COLUMN_MAX_TEMP,
+			WeatherContract.WeatherEntry.COLUMN_MIN_TEMP,
+			WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING,
+			WeatherContract.WeatherEntry.COLUMN_WEATHER_ID,
+			WeatherContract.LocationEntry.COLUMN_COORD_LAT,
+			WeatherContract.LocationEntry.COLUMN_COORD_LONG
+		};
+
+		// These indices are tied to FORECAST_COLUMNS.  If FORECAST_COLUMNS changes, these
+		// must change.  Projections
+		static final int COL_WEATHER_ID = 0;
+		static final int COL_WEATHER_DATE = 1;
+		static final int COL_WEATHER_DESC = 2;
+		static final int COL_WEATHER_MAX_TEMP = 3;
+		static final int COL_WEATHER_MIN_TEMP = 4;
+		static final int COL_LOCATION_SETTING = 5;
+		static final int COL_WEATHER_CONDITION_ID = 6;
+		static final int COL_COORD_LAT = 7;
+		static final int COL_COORD_LONG = 8;
 		
 		/* (non-Javadoc)
 		 * @see android.support.v4.app.Fragment#onCreate(android.os.Bundle)
@@ -74,6 +106,17 @@ public class DetailActivity extends ActionBarActivity {
 		}
 
 		
+		/* (non-Javadoc)
+		 * @see android.support.v4.app.Fragment#onActivityCreated(android.os.Bundle)
+		 */
+		@Override
+		public void onActivityCreated(Bundle savedInstanceState) {
+			// Initializing Loader w/ LoaderManager
+			getLoaderManager().initLoader(DETAIL_LOADER_ID, null, this);
+			super.onActivityCreated(savedInstanceState);
+		}
+
+
 		public DetailFragment() {
 			setHasOptionsMenu(true);  // This Fragment has Options to add to the Options Menu
 		}
@@ -94,8 +137,12 @@ public class DetailActivity extends ActionBarActivity {
 			}
 			
 			if (null != mForecastStr) {
-				((TextView) rootView.findViewById(R.id.detail_text))
-				.setText(mForecastStr) ;  // find the textView in the fragment_detail and set it.
+//				((TextView) rootView.findViewById(R.id.detail_text))
+//				.setText(mForecastStr) ;  // find the textView in the fragment_detail and set it.
+
+				// Need to set tv in onLoadFinished()
+				tv = ((TextView) rootView.findViewById(R.id.detail_text));
+				tv.setText(mForecastStr);
 			}
 			
 			return rootView;
@@ -135,7 +182,7 @@ public class DetailActivity extends ActionBarActivity {
 			
 			// Says to not put the app we are sharing to on the call stack.  So if we 
 			// click our apps icon later we are brought to our app and not the app
-			// that we were sharing too!
+			// that we were sharing to!
 			shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
 			
 			shareIntent.setType("text/plain");
@@ -143,6 +190,60 @@ public class DetailActivity extends ActionBarActivity {
 					+ FORECAST_SHARE_HASHTAG);
 			
 			return shareIntent;
+		}
+
+
+		@Override
+		public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
+			Intent intent = getActivity().getIntent();
+			Uri uri = null;
+			
+			String sortOrder = WeatherContract.WeatherEntry.COLUMN_DATE + " ASC";
+			
+			if (intent != null) {  // if we could find it
+				uri = Uri.parse(intent.getDataString());
+			}
+			
+			return new CursorLoader(
+					getActivity(), 
+					uri,
+					DETAIL_COLUMNS, 
+					null, 
+					null, 
+					sortOrder);
+		}
+
+
+		@Override
+		public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+			boolean isMetric = Utility.isMetric(getActivity());
+			
+			if (null != cursor) {
+				if (!cursor.moveToFirst()) {  // Setting Cursor to 1st position and checking for data
+					Log.d(LOG_TAG, "Nothing came back from the cursor");
+				}
+				String highLowStr = Utility.formatTemperature(
+						cursor.getDouble(DetailFragment.COL_WEATHER_MAX_TEMP) 
+						, isMetric) 
+						+ "/" +
+						Utility.formatTemperature(
+								cursor.getDouble(DetailFragment.COL_WEATHER_MIN_TEMP)
+								, isMetric);
+				
+				mForecastStr = Utility.formatDate(cursor.getLong(DetailFragment.COL_WEATHER_DATE)) + 
+						" - " + cursor.getString(DetailFragment.COL_WEATHER_DESC) +
+						" - " + highLowStr;
+				
+				tv.setText(mForecastStr);
+			}
+			
+		}
+
+
+		@Override
+		public void onLoaderReset(Loader<Cursor> arg0) {
+			// Not using cursorAdapter so no resources to releaase
+			
 		}
 		
 	}
