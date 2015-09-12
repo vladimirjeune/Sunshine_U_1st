@@ -13,7 +13,7 @@ import android.view.MenuItem;
 public class MainActivity extends ActionBarActivity {
 
 	private final String LOG_TAG = MainActivity.class.getSimpleName();
-	public static final String FORECASTFRAGMENT_TAG = "forecast_fragment";
+	public static final String FORECASTFRAGMENT_TAG = "FFTAG";
 	private String mLocation = ""
 			;
 	@Override
@@ -72,12 +72,16 @@ public class MainActivity extends ActionBarActivity {
 		
 		String storedLocation = Utility.getPreferredLocation(this);
 		
-		if (!storedLocation.equals(mLocation)) {  // If there is mismatch, correct it
+		// update the location in our second pane using the fragment manager
+		if ((storedLocation != null) && (!storedLocation.equals(mLocation))) {  // If there is mismatch, correct it
 			ForecastFragment ff = (ForecastFragment) getSupportFragmentManager()
 					.findFragmentByTag(FORECASTFRAGMENT_TAG);  // Find the correct Fragment
 			
-			ff.onLocationChange();
-			mLocation = storedLocation;
+			if (null != ff) {
+				ff.onLocationChange();  // Get new data and place it in DB
+			}
+			
+			mLocation = storedLocation;  // Repair mismatch here as well
 		}
 	}
 
