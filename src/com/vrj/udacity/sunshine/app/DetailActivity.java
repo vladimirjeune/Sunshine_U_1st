@@ -71,8 +71,7 @@ public class DetailActivity extends ActionBarActivity {
 	    private ShareActionProvider mShareActionProvider;
 		private static final String FORECAST_SHARE_HASHTAG = " #SunshineApp";
 		private String mForecastStr = "";
-		private TextView tv = null;
-		
+				
 		private static final String[] DETAIL_COLUMNS = {
 			WeatherContract.WeatherEntry.TABLE_NAME + "." + WeatherContract.WeatherEntry._ID,
 			WeatherContract.WeatherEntry.COLUMN_DATE,
@@ -120,24 +119,7 @@ public class DetailActivity extends ActionBarActivity {
 			
 			View rootView = inflater.inflate(R.layout.fragment_detail,
 					container, false);
-			
-			// Get the intent that started this activity
-			Intent intent = getActivity().getIntent();
-			
-			// Check for intent
-			if ( intent != null) {
-				mForecastStr = intent.getDataString();  // You set Data using setData(), for now data is URI
-			}
-			
-			if (null != mForecastStr) {
-//				((TextView) rootView.findViewById(R.id.detail_text))
-//				.setText(mForecastStr) ;  // find the textView in the fragment_detail and set it.
-
-				// Need to set tv in onLoadFinished()
-				tv = ((TextView) rootView.findViewById(R.id.detail_text));
-				tv.setText(mForecastStr);
-			}
-			
+				
 			return rootView;
 		}
 
@@ -160,8 +142,6 @@ public class DetailActivity extends ActionBarActivity {
 			// Such as when the user selects a new piece of data they'd like to send.
 			if (mForecastStr != null) {  // Only do this if there is a forecast to share. No assumption about order
 				mShareActionProvider.setShareIntent(createShareIntent());
-			} else {
-				Log.d(LOG_TAG, "Forecast String is null?");
 			}
 			
 		}
