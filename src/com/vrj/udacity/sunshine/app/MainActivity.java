@@ -13,14 +13,20 @@ import android.view.MenuItem;
 public class MainActivity extends ActionBarActivity {
 
 	private final String LOG_TAG = MainActivity.class.getSimpleName();
-	
+	public static final String FORECASTFRAGMENT_TAG = "forecast_fragment";
+	private String mLocation = ""
+			;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
+		mLocation = Utility.getPreferredLocation(this);  // Set to loc in SharedPrefs
+		
 		if (savedInstanceState == null) {
 			getSupportFragmentManager().beginTransaction()
-					.add(R.id.container, new ForecastFragment()).commit();
+					.add(R.id.container, new ForecastFragment()
+					, FORECASTFRAGMENT_TAG).commit();
 			
 		}
 		Log.i(LOG_TAG, "ONCREATE()");
@@ -61,9 +67,18 @@ public class MainActivity extends ActionBarActivity {
 	 */
 	@Override
 	protected void onResume() {
-		// TODO Auto-generated method stub
 		super.onResume();
 		Log.i(LOG_TAG, "ONRESUME()");
+		
+		String storedLocation = Utility.getPreferredLocation(this);
+		
+		if (!storedLocation.equals(mLocation)) {  // If there is mismatch, correct it
+			ForecastFragment ff = (ForecastFragment) getSupportFragmentManager()
+					.findFragmentByTag(FORECASTFRAGMENT_TAG);  // Find the correct Fragment
+			
+			ff.onLocationChange();
+			mLocation = storedLocation;
+		}
 	}
 
 	/* (non-Javadoc)

@@ -151,6 +151,15 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 	}
 
 	/**
+	 * ONLOCATIONCHANGED - Call when location has changed
+	 * 		since we read the location when we create the loader, all we need to do is restart things
+	 */
+	public void onLocationChange() {
+		updateWeather();
+		getLoaderManager().restartLoader(FORECAST_LOADER_ID, null, this);
+	}
+	
+	/**
 	 * UPDATEWEATHER - Updates the weather data with the weather from the location stored in the user's 
 	 * 		stored preferences.
 	 */
@@ -160,14 +169,6 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 		weatherTask.execute(location); 
 	}
 	
-	/**
-	 * ONSTART - Occurs immediately after onCreate()
-	 */
-	@Override
-	public void onStart() {
-		super.onStart();
-		updateWeather();
-	}
 
 	/**
 	 * ONCREATELOADER - will call ContentProvider when executed by LoaderManager.
