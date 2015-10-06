@@ -1,12 +1,12 @@
 package com.vrj.udacity.sunshine.app;
 
-import com.vrj.udacity.sunshine.app.data.WeatherContract;
-
 import android.content.Intent;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.ShareActionProvider;
@@ -17,10 +17,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
+
+import com.vrj.udacity.sunshine.app.data.WeatherContract;
 
 public class DetailActivity extends ActionBarActivity {
 
@@ -77,7 +77,11 @@ public class DetailActivity extends ActionBarActivity {
 			WeatherContract.WeatherEntry.COLUMN_DATE,
 			WeatherContract.WeatherEntry.COLUMN_SHORT_DESC,
 			WeatherContract.WeatherEntry.COLUMN_MAX_TEMP,
-			WeatherContract.WeatherEntry.COLUMN_MIN_TEMP
+			WeatherContract.WeatherEntry.COLUMN_MIN_TEMP,
+			WeatherContract.WeatherEntry.COLUMN_HUMIDITY,
+			WeatherContract.WeatherEntry.COLUMN_WIND_SPEED,
+			WeatherContract.WeatherEntry.COLUMN_DEGREES,
+			WeatherContract.WeatherEntry.COLUMN_PRESSURE
 		};
 
 		// These indices are tied to FORECAST_COLUMNS.  If FORECAST_COLUMNS changes, these
@@ -87,6 +91,11 @@ public class DetailActivity extends ActionBarActivity {
 		static final int COL_WEATHER_DESC = 2;
 		static final int COL_WEATHER_MAX_TEMP = 3;
 		static final int COL_WEATHER_MIN_TEMP = 4;
+		static final int COL_HUMIDITY = 5;
+		static final int COL_WIND = 6;
+		static final int COL_WIND_DEGREES = 7;
+		static final int COL_PRESSURE = 8;
+		
 		
 		
 		/* (non-Javadoc)
@@ -204,23 +213,68 @@ public class DetailActivity extends ActionBarActivity {
 			// Use our Utility Class to obtain correct functions for formatting
 			boolean isMetric = Utility.isMetric(getActivity());
 
-			String highLowStr = Utility.formatTemperature(
-					getActivity() 
-					, cursor.getDouble(COL_WEATHER_MAX_TEMP), isMetric) 
-					+ "/" +
-					Utility.formatTemperature(
-							getActivity()
-							, cursor.getDouble(COL_WEATHER_MIN_TEMP), isMetric);
-
-			mForecastStr = Utility.formatDate(cursor.getLong(COL_WEATHER_DATE)) + 
-					" - " + cursor.getString(COL_WEATHER_DESC) +
-					" - " + highLowStr;
-
-			// Get the TextView so we can set it.
-			TextView detailTextView = (TextView) getView().findViewById(R.id.detail_text);
-			detailTextView.setText(mForecastStr);
+//			String highLowStr = Utility.formatTemperature(
+//					getActivity() 
+//					, cursor.getDouble(COL_WEATHER_MAX_TEMP), isMetric) 
+//					+ "/" +
+//					Utility.formatTemperature(
+//							getActivity()
+//							, cursor.getDouble(COL_WEATHER_MIN_TEMP), isMetric);
+//
+//			mForecastStr = Utility.formatDate(cursor.getLong(COL_WEATHER_DATE)) + 
+//					" - " + cursor.getString(COL_WEATHER_DESC) +
+//					" - " + highLowStr;
+//
+//			// Get the TextView so we can set it.
+//			TextView detailTextView = (TextView) getView().findViewById(R.id.detail_text);
+//			detailTextView.setText(mForecastStr);
 			
-			// If onCreateOptionMenu has already occured, we need to update the shareIntent
+			// TODO: Gather all Views
+			
+			TextView detail_date_textView = (TextView) getView()
+					.findViewById(R.id.detail_date_textView);
+			TextView detail_high_textView = (TextView) getView()
+					.findViewById(R.id.detail_high_textView);
+			TextView detail_low_textView = (TextView) getView()
+					.findViewById(R.id.detail_low_textView);
+			TextView detail_humidity_textView = (TextView) getView()
+					.findViewById(R.id.detail_humidity_textView);
+			TextView detail_wind_textView = (TextView) getView()
+					.findViewById(R.id.detail_wind_textView);
+			TextView detail_pressure_textView = (TextView) getView()
+					.findViewById(R.id.detail_pressure_textView);
+			ImageView detail_icon_imageView = (ImageView) getView()
+					.findViewById(R.id.detail_icon);
+			TextView detail_forecast_textView = (TextView) getView()
+					.findViewById(R.id.detail_forecast_textView);
+			
+			
+			long dateInMS = cursor.getLong(COL_WEATHER_DATE);
+			detail_date_textView.setText(Utility
+					.getFriendlyDayString(getActivity(), dateInMS));
+			
+			detail_high_textView.setText(Utility.formatTemperature(getActivity() 
+					, cursor.getDouble(COL_WEATHER_MAX_TEMP), isMetric));
+			
+			detail_low_textView.setText(Utility.formatTemperature(getActivity() 
+					, cursor.getDouble(COL_WEATHER_MIN_TEMP), isMetric));
+						
+			detail_humidity_textView.setText(getActivity()
+					.getString(R.string.format_humidity, cursor.getFloat(COL_HUMIDITY)));  // Utility?
+			
+			detail_wind_textView.setText(Utility.getFormattedWind(getActivity()
+					, cursor.getFloat(COL_WIND)
+					, cursor.getFloat(COL_WIND_DEGREES)));
+			
+			detail_pressure_textView.setText(getActivity()
+					.getString(R.string.format_pressure, cursor.getFloat(COL_PRESSURE)));
+
+			detail_icon_imageView.setImageResource(R.drawable.ic_launcher);
+
+			detail_forecast_textView.setText(getActivity()
+					.getString(R.string.format_forecast, cursor.getString(COL_WEATHER_DESC)));
+			
+			// If onCreateOptionMenu has already occurred, we need to update the shareIntent
 			if (mShareActionProvider != null) {
 				mShareActionProvider.setShareIntent(createShareIntent());  // Since mForecastStr has changed
 			}
