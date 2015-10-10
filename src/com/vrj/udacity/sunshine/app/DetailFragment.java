@@ -40,7 +40,10 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 		WeatherContract.WeatherEntry.COLUMN_HUMIDITY,
 		WeatherContract.WeatherEntry.COLUMN_WIND_SPEED,
 		WeatherContract.WeatherEntry.COLUMN_DEGREES,
-		WeatherContract.WeatherEntry.COLUMN_PRESSURE
+		WeatherContract.WeatherEntry.COLUMN_PRESSURE,
+		// This works because the WeatherProvider returns location data joined with
+		// weather data, even though they're stored in two different tables.
+		WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING
 	};
 
 	// These indices are tied to FORECAST_COLUMNS.  If FORECAST_COLUMNS changes, these
@@ -54,7 +57,17 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 	static final int COL_WIND = 6;
 	static final int COL_WIND_DEGREES = 7;
 	static final int COL_PRESSURE = 8;
+	public static final int COL_WEATHER_CONDITION_ID = 9;
 	
+	private ImageView mIconView;
+	private TextView  mFriendlyDateView;
+	private TextView  mDateView;
+	private TextView  mDescriptionView;
+	private TextView  mHighTempView;
+	private TextView  mLowTempView;
+	private TextView  mHumidityView;
+	private TextView  mWindView;
+	private TextView  mPressureView;
 	
 	
 	/* (non-Javadoc)
@@ -87,6 +100,27 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 		
 		View rootView = inflater.inflate(R.layout.fragment_detail,
 				container, false);
+		
+		// Doing this in the onCreate saves time so we are not constantly
+		// looking through the hierarchy.
+		mDateView = (TextView) rootView
+				.findViewById(R.id.detail_date_textView);
+		mFriendlyDateView = (TextView) rootView
+				.findViewById(R.id.detail_day_textView);
+		mHighTempView = (TextView) rootView
+				.findViewById(R.id.detail_high_textView);
+		mLowTempView = (TextView) rootView
+				.findViewById(R.id.detail_low_textView);
+		mHumidityView = (TextView) rootView
+				.findViewById(R.id.detail_humidity_textView);
+		mWindView = (TextView) rootView
+				.findViewById(R.id.detail_wind_textView);
+		mPressureView = (TextView) rootView
+				.findViewById(R.id.detail_pressure_textView);
+		mIconView = (ImageView) rootView
+				.findViewById(R.id.detail_icon);
+		mDescriptionView = (TextView) rootView
+				.findViewById(R.id.detail_forecast_textView);
 			
 		return rootView;
 	}
@@ -164,58 +198,54 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 	@Override
 	public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
 		Log.v(LOG_TAG, "In onLoadFinished()");
-		if (!cursor.moveToFirst()) {  // Setting Cursor to 1st position and checking for data
+		if ((cursor == null) || (!cursor.moveToFirst())) {  // Setting Cursor to 1st position and checking for data
 			Log.d(LOG_TAG, "Nothing came back from the cursor");
 			return;
 		}
+		
+		// Read weather condition ID from cursor
+		int weatherId = cursor.getInt(COL_WEATHER_CONDITION_ID);
 		
 		// Use our Utility Class to obtain correct functions for formatting
 		boolean isMetric = Utility.isMetric(getActivity());
 		
 		// Gather all Views
-		TextView detail_date_textView = (TextView) getView()
-				.findViewById(R.id.detail_date_textView);
-		TextView detail_high_textView = (TextView) getView()
-				.findViewById(R.id.detail_high_textView);
-		TextView detail_low_textView = (TextView) getView()
-				.findViewById(R.id.detail_low_textView);
-		TextView detail_humidity_textView = (TextView) getView()
-				.findViewById(R.id.detail_humidity_textView);
-		TextView detail_wind_textView = (TextView) getView()
-				.findViewById(R.id.detail_wind_textView);
-		TextView detail_pressure_textView = (TextView) getView()
-				.findViewById(R.id.detail_pressure_textView);
-		ImageView detail_icon_imageView = (ImageView) getView()
-				.findViewById(R.id.detail_icon);
-		TextView detail_forecast_textView = (TextView) getView()
-				.findViewById(R.id.detail_forecast_textView);
+
 		
 		
 		long dateInMS = cursor.getLong(COL_WEATHER_DATE);
-		detail_date_textView.setText(Utility
-				.getFriendlyDayString(getActivity(), dateInMS));
+		mFriendlyDateView.setText(Utility
+				.getDayName(getActivity(), dateInMS));
 		
-		detail_high_textView.setText(Utility.formatTemperature(getActivity() 
-				, cursor.getDouble(COL_WEATHER_MAX_TEMP), isMetric));
+		String dateText = Utility.getFormattedMonthDay(getActivity(), dateInMS);
+		mDateView.setText(dateText);
 		
-		detail_low_textView.setText(Utility.formatTemperature(getActivity() 
-				, cursor.getDouble(COL_WEATHER_MIN_TEMP), isMetric));
+		String high = Utility.formatTemperature(getActivity() 
+				, cursor.getDouble(COL_WEATHER_MAX_TEMP), isMetric);
+		mHighTempView.setText(high);
+		
+		String low = Utility.formatTemperature(getActivity() 
+				, cursor.getDouble(COL_WEATHER_MIN_TEMP), isMetric);
+		mLowTempView.setText(low);
 					
-		detail_humidity_textView.setText(getActivity()
+		mHumidityView.setText(getActivity()
 				.getString(R.string.format_humidity, cursor.getFloat(COL_HUMIDITY)));  // Utility?
 		
-		detail_wind_textView.setText(Utility.getFormattedWind(getActivity()
+		mWindView.setText(Utility.getFormattedWind(getActivity()
 				, cursor.getFloat(COL_WIND)
 				, cursor.getFloat(COL_WIND_DEGREES)));
 		
-		detail_pressure_textView.setText(getActivity()
+		mPressureView.setText(getActivity()
 				.getString(R.string.format_pressure, cursor.getFloat(COL_PRESSURE)));
 
-		detail_icon_imageView.setImageResource(R.drawable.ic_launcher);
+		mIconView.setImageResource(R.drawable.ic_launcher);
 
-		detail_forecast_textView.setText(getActivity()
-				.getString(R.string.format_forecast, cursor.getString(COL_WEATHER_DESC)));
+		String description = cursor.getString(COL_WEATHER_DESC);
+		mDescriptionView.setText(description);
 		
+		// We still need this for the share intent
+		mForecastStr = String.format("%s - %s - %s/%s", dateText, description, high, low);
+
 		// If onCreateOptionMenu has already occurred, we need to update the shareIntent
 		if (mShareActionProvider != null) {
 			mShareActionProvider.setShareIntent(createShareIntent());  // Since mForecastStr has changed

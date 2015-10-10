@@ -70,13 +70,6 @@
 	 
 	<!-- Humidity format CHAR LIMIT=25]-->
 	<string name="format_humidity">Humidity: <xliff:g id="humidity">%1.0f</xliff:g> %%</string>
-    
-    <!-- Description format -->
-    <string name="format_forecast"><xliff:g id="forecast">%1$s</xliff:g></string>
-        
-        
-    
-
 
 
 </resources>
