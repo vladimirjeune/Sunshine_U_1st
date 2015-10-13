@@ -41,6 +41,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 		WeatherContract.WeatherEntry.COLUMN_WIND_SPEED,
 		WeatherContract.WeatherEntry.COLUMN_DEGREES,
 		WeatherContract.WeatherEntry.COLUMN_PRESSURE,
+		WeatherContract.WeatherEntry.COLUMN_WEATHER_ID,
 		// This works because the WeatherProvider returns location data joined with
 		// weather data, even though they're stored in two different tables.
 		WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING
@@ -57,7 +58,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 	static final int COL_WIND = 6;
 	static final int COL_WIND_DEGREES = 7;
 	static final int COL_PRESSURE = 8;
-	public static final int COL_WEATHER_CONDITION_ID = 9;
+	static final int COL_WEATHER_ICON_ID = 9;
+	public static final int COL_WEATHER_CONDITION_ID = 10;  // TODO: Find out what for
 	
 	private ImageView mIconView;
 	private TextView  mFriendlyDateView;
@@ -203,16 +205,16 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 			return;
 		}
 		
-		// Read weather condition ID from cursor
-		int weatherId = cursor.getInt(COL_WEATHER_CONDITION_ID);
-		
 		// Use our Utility Class to obtain correct functions for formatting
 		boolean isMetric = Utility.isMetric(getActivity());
 		
 		// Gather all Views
 
-		
-		
+		// Read weather condition ID from cursor
+		int weatherId = cursor.getInt(COL_WEATHER_ICON_ID);
+		Log.i(LOG_TAG, "This is the ID returned: " + weatherId);
+		mIconView.setImageResource(Utility.getArtResourceForWeatherCondition(weatherId));
+
 		long dateInMS = cursor.getLong(COL_WEATHER_DATE);
 		mFriendlyDateView.setText(Utility
 				.getDayName(getActivity(), dateInMS));
@@ -237,8 +239,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 		
 		mPressureView.setText(getActivity()
 				.getString(R.string.format_pressure, cursor.getFloat(COL_PRESSURE)));
-
-		mIconView.setImageResource(R.drawable.ic_launcher);
 
 		String description = cursor.getString(COL_WEATHER_DESC);
 		mDescriptionView.setText(description);

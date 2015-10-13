@@ -16,8 +16,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.vrj.udacity.sunshine.app.data.WeatherContract;
-
 /**
  * {@link ForecastAdapter} exposes a list of weather forecasts
  * from a {@link android.database.Cursor} to a {@link android.widget.ListView}.
@@ -101,18 +99,22 @@ public class ForecastAdapter extends CursorAdapter {
    */
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
-		// We are settting the views in the ViewHolder to save rendering time
+		// We are setting the views in the ViewHolder to save rendering time
 		ForecastAdapterViewHolder favh = (ForecastAdapterViewHolder) view
 				.getTag();  // Getting our ViewHolder out, so we do not have 
-							// to retraverse the View Hieararchy.
+							// to re-traverse the View Hierarchy.
 				
 	    // Read weather icon ID from cursor
-	    int weatherId = cursor.getInt(ForecastFragment.COL_WEATHER_ID);
-	    // Use placeholder image for now
-
-	    // Currently using plachholder image
-	    favh.iconView.setImageResource(R.drawable.ic_launcher);
-	
+	    int weatherId = cursor.getInt(ForecastFragment.COL_WEATHER_CONDITION_ID);
+	    
+	    // Need to determine weather to use the ART or ICON image
+	    // Since Today, and OTHER DAYS use different images in this List
+	    if (getItemViewType(cursor.getPosition()) == VIEW_TYPE_TODAY) {
+	    	favh.iconView.setImageResource(Utility.getArtResourceForWeatherCondition(weatherId));
+	    } else {
+	    	favh.iconView.setImageResource(Utility.getIconResourceForWeatherCondition(weatherId));
+	    }
+	    	
 	    // Read date from cursor
 	    long dateInMS = cursor.getLong(ForecastFragment.COL_WEATHER_DATE);	    
 	    favh.dateView.setText(Utility.getFriendlyDayString(context, dateInMS));
