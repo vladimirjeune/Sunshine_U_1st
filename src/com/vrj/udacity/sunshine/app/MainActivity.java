@@ -11,22 +11,38 @@ import android.view.MenuItem;
 public class MainActivity extends ActionBarActivity {
 
 	private final String LOG_TAG = MainActivity.class.getSimpleName();
-	public static final String FORECASTFRAGMENT_TAG = "FFTAG";
-	private String mLocation = ""
-			;
+	private static final String DETAILFRAGMENT_TAG = "DFTAG";
+	private String mLocation = "";
+	private boolean mTwoPane = false;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
-		
 		mLocation = Utility.getPreferredLocation(this);  // Set to loc in SharedPrefs
-		
-		if (savedInstanceState == null) {
-			getSupportFragmentManager().beginTransaction()
-					.add(R.id.container, new ForecastFragment()
-					, FORECASTFRAGMENT_TAG).commit();
-			
+		setContentView(R.layout.activity_main);
+
+		if (findViewById(R.id.weather_detail_container) != null) {
+            // The detail container view will be present only in the large-screen layouts
+            // (res/layout-sw600dp). If this view is present, then the activity should be
+            // in two-pane mode.
+            mTwoPane = true;
+            // In two-pane mode, show the detail view in this activity by
+            // adding or replacing the detail fragment using a
+            // fragment transaction.
+            
+            // Note how in the two pane case we check if the saved instance state is null. 
+            // Why? Well if we rotate the phone, the system saves the fragment state in 
+            // the saved state bundle and is smart enough to restore this state.
+            // Therefore, if the saved state bundle is not null, the system already has the fragment it needs and you shouldn’t go adding another one.
+            if (savedInstanceState == null) {
+            	getSupportFragmentManager().beginTransaction()
+            	.replace(R.id.weather_detail_container, new DetailFragment(), DETAILFRAGMENT_TAG)
+            	.commit();
+            }
+		} else {
+			mTwoPane = false;
 		}
+		
 		Log.i(LOG_TAG, "ONCREATE()");
 	}
 
@@ -73,7 +89,7 @@ public class MainActivity extends ActionBarActivity {
 		// update the location in our second pane using the fragment manager
 		if ((storedLocation != null) && (!storedLocation.equals(mLocation))) {  // If there is mismatch, correct it
 			ForecastFragment ff = (ForecastFragment) getSupportFragmentManager()
-					.findFragmentByTag(FORECASTFRAGMENT_TAG);  // Find the correct Fragment
+					.findFragmentById(R.id.fragment_forecast);  
 			
 			if (null != ff) {
 				ff.onLocationChange();  // Get new data and place it in DB

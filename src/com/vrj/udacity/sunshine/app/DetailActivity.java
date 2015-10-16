@@ -17,7 +17,7 @@ public class DetailActivity extends ActionBarActivity {
 		
 		if (savedInstanceState == null) {
 			getSupportFragmentManager().beginTransaction()
-					.add(R.id.container, new DetailFragment()).commit();
+					.add(R.id.weather_detail_container, new DetailFragment()).commit();
 		}
 
 	}

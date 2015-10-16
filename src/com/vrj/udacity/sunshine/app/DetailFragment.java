@@ -179,10 +179,14 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 		Log.v(LOG_TAG, "In onCreateLoader");
 		Intent intent = getActivity().getIntent();
 		
-		if (null == intent) { 
+		// The data can be null now because we could be called from MainActivity.
+		// So there may not be an URI coming.
+		if ((null == intent) || (null == intent.getData())) { 
 			return null; 
 		}
 		
+		// Now create and return a CursorLoader that will take care of
+        // creating a Cursor for the data being displayed.
 		return new CursorLoader(
 				getActivity(), 
 				intent.getData(),

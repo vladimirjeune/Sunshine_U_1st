@@ -19,11 +19,13 @@
 		<TextView 
 		    android:id="@+id/detail_day_textView"
 			android:layout_width="wrap_content" 
-			android:layout_height="wrap_content" />
+			android:layout_height="wrap_content" 
+			android:text="Today" />
 
 		<TextView android:id="@+id/detail_date_textView"
 			android:layout_width="wrap_content" 
-			android:layout_height="wrap_content" />
+			android:layout_height="wrap_content"
+			android:text="October 12" />
 
 		<!-- Main content: high, low, art, weather state -->
 		<LinearLayout 
@@ -43,12 +45,14 @@
 				    android:id="@+id/detail_high_textView"
 					android:layout_width="wrap_content" 
 					android:layout_height="wrap_content" 
-					android:textAppearance="?android:attr/textAppearanceLarge" />
+					android:textAppearance="?android:attr/textAppearanceLarge" 
+					android:text="90" />
 
 				<TextView android:id="@+id/detail_low_textView"
 					android:layout_width="wrap_content" 
 					android:layout_height="wrap_content" 
-					android:textAppearance="?android:attr/textAppearanceLarge" />
+					android:textAppearance="?android:attr/textAppearanceLarge"
+					android:text="48" />
 			</LinearLayout>
 
 			<LinearLayout 
@@ -61,12 +65,14 @@
 				<ImageView 
 				    android:id="@+id/detail_icon"
 					android:layout_width="wrap_content" 
-					android:layout_height="wrap_content" />
-
+					android:layout_height="wrap_content"
+					android:src="@drawable/art_clear" />
+				
 				<TextView 
 				    android:id="@+id/detail_forecast_textView"
 					android:layout_width="wrap_content" 
-					android:layout_height="wrap_content" />
+					android:layout_height="wrap_content"
+					android:text="clear" />
 
 			</LinearLayout>
 		</LinearLayout>
