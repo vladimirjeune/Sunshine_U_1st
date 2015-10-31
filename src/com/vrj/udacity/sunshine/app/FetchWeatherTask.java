@@ -55,6 +55,8 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
     private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
 
     private final Context mContext;
+    
+    private static final String OPEN_WEATHER_MAP_API_KEY = "40b07edc81085fde22fe2a89072ce086"; 
 
     public FetchWeatherTask(Context context) {
         mContext = context;
@@ -91,6 +93,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
     	} else {  // Do an insert of the parameter values
     		
     		// Creation of ContentValues for insert
+    		// TODO: Fixup, order is different, if causes trouble
     		ContentValues cValues = new ContentValues();
     		cValues.put(WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING, locationSetting);
     		cValues.put(WeatherContract.LocationEntry.COLUMN_CITY_NAME, cityName);
@@ -294,12 +297,14 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
             final String FORMAT_PARAM = "mode";
             final String UNITS_PARAM = "units";
             final String DAYS_PARAM = "cnt";
+            final String APPID_PARAM = "APPID";  // Needed in order to get data 10/9/15
 
             Uri builtUri = Uri.parse(FORECAST_BASE_URL).buildUpon()
                     .appendQueryParameter(QUERY_PARAM, params[0])
                     .appendQueryParameter(FORMAT_PARAM, format)
                     .appendQueryParameter(UNITS_PARAM, units)
                     .appendQueryParameter(DAYS_PARAM, Integer.toString(numDays))
+                    .appendQueryParameter(APPID_PARAM, OPEN_WEATHER_MAP_API_KEY)
                     .build();
 
             URL url = new URL(builtUri.toString());

@@ -8,12 +8,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements ForecastFragment.Callback {
 
 	private final String LOG_TAG = MainActivity.class.getSimpleName();
 	private static final String DETAILFRAGMENT_TAG = "DFTAG";
 	private String mLocation = "";
 	private boolean mTwoPane = false;
+	private Uri mUri = null;
+	public static final String URI = "uri";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +35,8 @@ public class MainActivity extends ActionBarActivity {
             // Note how in the two pane case we check if the saved instance state is null. 
             // Why? Well if we rotate the phone, the system saves the fragment state in 
             // the saved state bundle and is smart enough to restore this state.
-            // Therefore, if the saved state bundle is not null, the system already has the fragment it needs and you shouldn’t go adding another one.
+            // Therefore, if the saved state bundle is not null, the system already has the fragment 
+            // it needs and you shouldn’t go adding another one.
             if (savedInstanceState == null) {
             	getSupportFragmentManager().beginTransaction()
             	.replace(R.id.weather_detail_container, new DetailFragment(), DETAILFRAGMENT_TAG)
@@ -51,7 +54,6 @@ public class MainActivity extends ActionBarActivity {
 	 */
 	@Override
 	protected void onStop() {
-		// TODO Auto-generated method stub
 		super.onStop();
 		Log.i(LOG_TAG, "ONSTOP()");
 	}
@@ -61,7 +63,6 @@ public class MainActivity extends ActionBarActivity {
 	 */
 	@Override
 	protected void onDestroy() {
-		// TODO Auto-generated method stub
 		super.onDestroy();
 		Log.i(LOG_TAG, "ONDESTROY()");
 	}
@@ -71,7 +72,6 @@ public class MainActivity extends ActionBarActivity {
 	 */
 	@Override
 	protected void onPause() {
-		// TODO Auto-generated method stub
 		super.onPause();
 		Log.i(LOG_TAG, "ONPAUSE()");
 	}
@@ -94,7 +94,10 @@ public class MainActivity extends ActionBarActivity {
 			if (null != ff) {
 				ff.onLocationChange();  // Get new data and place it in DB
 			}
-			
+			DetailFragment df = (DetailFragment)getSupportFragmentManager().findFragmentByTag(DETAILFRAGMENT_TAG);
+            if ( null != df ) {
+                df.onLocationChanged(storedLocation);
+            }
 			mLocation = storedLocation;  // Repair mismatch here as well
 		}
 	}
@@ -104,7 +107,6 @@ public class MainActivity extends ActionBarActivity {
 	 */
 	@Override
 	protected void onStart() {
-		// TODO Auto-generated method stub
 		super.onStart();
 		Log.i(LOG_TAG, "ONSTART()");
 	}
@@ -168,6 +170,41 @@ public class MainActivity extends ActionBarActivity {
 		} else {
 			Log.d(LOG_TAG, "Couldn't call " + location + ", no receiving apps installed!");
 		}
+		
+	}
+
+	/**
+	 * ISTWOPANE - will tell whether this is a 2 pane view or not in this orientation.
+	 * @return - boolean - whether we are in a two pane mode
+	 */
+	public boolean isTwoPane() {
+		return mTwoPane;
+	}
+	
+	/**
+	 * ONITEMSELECTED - Should be used to talk to the DetailFragment when in 2 pane
+	 * mode and a new item has been selected from the Forecast list.  This callback
+	 * will be called from ForecastFragment.
+	 */
+	@Override
+	public void onItemSelected(Uri dateUri) {
+
+		DetailFragment df = (DetailFragment) getSupportFragmentManager()
+				.findFragmentByTag(DETAILFRAGMENT_TAG);
+		
+		// Found correct fragment
+		if (df != null) {
+			Log.i(DETAILFRAGMENT_TAG, "An item has been selected" + dateUri.toString());	
+			getSupportFragmentManager().beginTransaction()
+				.replace(R.id.weather_detail_container, DetailFragment
+						.newInstance(dateUri)).commit();
+		}
+		
+		// TODO: Find the correct DetailFragment and have that replace what is 
+		// 		already there, unless it is the same.
+		//      We do this to maintain abstraction since 1 pane layout would 
+		//      otherwise crash.  Cannot assume that we always have a DetailFragment.
+		//      Make sure in 2 pane mode
 		
 	}
 

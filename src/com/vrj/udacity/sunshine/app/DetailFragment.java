@@ -2,6 +2,7 @@ package com.vrj.udacity.sunshine.app;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -30,6 +31,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     private ShareActionProvider mShareActionProvider;
 	private static final String FORECAST_SHARE_HASHTAG = " #SunshineApp";
 	private String mForecastStr = "";
+	private Uri mUri = null;
 			
 	private static final String[] DETAIL_COLUMNS = {
 		WeatherContract.WeatherEntry.TABLE_NAME + "." + WeatherContract.WeatherEntry._ID,
@@ -169,6 +171,42 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 		return shareIntent;
 	}
 
+	
+	/**
+	 * GETINPUTTEDURI - will return the URI that was passed in if there was one.
+	 * 		Or it will return null.
+	 * @return
+	 */
+	public Uri getInputtedUri() {
+		Bundle bundle = getArguments();
+		String uriString;
+		
+		if (bundle != null) {
+			uriString = bundle.getString(MainActivity.URI);
+		} else {
+			return null;
+		}
+		
+//		mUri = Uri.parse(uriString);  // TODO: Added
+
+		return (null == uriString)? null : Uri.parse(uriString);
+	}
+	
+    /**
+     * Create a new instance of DetailsFragment, initialized to
+     * show the text at 'index'.
+     */
+    public static DetailFragment newInstance(Uri newUri) {
+        DetailFragment f = new DetailFragment();
+
+        // Supply index input as an argument.
+        Bundle args = new Bundle();
+        args.putString("uri", newUri.toString());
+        f.setArguments(args);
+
+        return f;
+    }
+	
 	/**
 	 * ONCREATELOADER - will call ContentProvider when called by LoaderManager.
 	 * 		Since derived from AsyncTaskLoader, will do operations on background
@@ -182,6 +220,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 		// The data can be null now because we could be called from MainActivity.
 		// So there may not be an URI coming.
 		if ((null == intent) || (null == intent.getData())) { 
+			mUri = intent.getData();  // TODO: Added
 			return null; 
 		}
 		
@@ -265,5 +304,20 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 	public void onLoaderReset(Loader<Cursor> arg0) {
 		// Not using cursorAdapter so no resources to releaase
 	}
+
+	/**
+	 * ONLOCATIONCHANGED - Call when location has changed
+	 * 		since we read the location when we create the loader, all we need to do is restart things
+	 */
+    void onLocationChanged( String newLocation ) {
+        // replace the uri, since the location has changed
+        Uri uri = mUri;
+        if (null != uri) {
+            long date = WeatherContract.WeatherEntry.getDateFromUri(uri);
+            Uri updatedUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(newLocation, date);
+            mUri = updatedUri;
+            getLoaderManager().restartLoader(DETAIL_LOADER_ID, null, this);
+        }
+    }
 	
 }
