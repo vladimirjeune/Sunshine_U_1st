@@ -32,6 +32,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 	private static final String FORECAST_SHARE_HASHTAG = " #SunshineApp";
 	private String mForecastStr = "";
 	private Uri mUri = null;
+	static final String DETAIL_URI = "URI";
 			
 	private static final String[] DETAIL_COLUMNS = {
 		WeatherContract.WeatherEntry.TABLE_NAME + "." + WeatherContract.WeatherEntry._ID,
@@ -101,6 +102,12 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		
+		Bundle arguments = getArguments();
+		
+		if (arguments != null){
+			mUri = arguments.getParcelable(DetailFragment.DETAIL_URI);
+		}
 		
 		View rootView = inflater.inflate(R.layout.fragment_detail,
 				container, false);
@@ -215,24 +222,21 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 	@Override
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
 		Log.v(LOG_TAG, "In onCreateLoader");
-		Intent intent = getActivity().getIntent();
 		
-		// The data can be null now because we could be called from MainActivity.
-		// So there may not be an URI coming.
-		if ((null == intent) || (null == intent.getData())) { 
-			mUri = intent.getData();  // TODO: Added
-			return null; 
+		if (mUri != null) {
+			// Now create and return a CursorLoader that will take care of
+			// creating a Cursor for the data being displayed.
+			return new CursorLoader(
+					getActivity(), 
+					mUri,
+					DETAIL_COLUMNS, 
+					null, 
+					null, 
+					null
+					);
 		}
 		
-		// Now create and return a CursorLoader that will take care of
-        // creating a Cursor for the data being displayed.
-		return new CursorLoader(
-				getActivity(), 
-				intent.getData(),
-				DETAIL_COLUMNS, 
-				null, 
-				null, 
-				null);
+		return null;
 	}
 
 	/**

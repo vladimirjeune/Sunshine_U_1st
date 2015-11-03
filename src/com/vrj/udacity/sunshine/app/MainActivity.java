@@ -188,23 +188,32 @@ public class MainActivity extends ActionBarActivity implements ForecastFragment.
 	 */
 	@Override
 	public void onItemSelected(Uri dateUri) {
-
-		DetailFragment df = (DetailFragment) getSupportFragmentManager()
-				.findFragmentByTag(DETAILFRAGMENT_TAG);
 		
-		// Found correct fragment
-		if (df != null) {
-			Log.i(DETAILFRAGMENT_TAG, "An item has been selected" + dateUri.toString());	
-			getSupportFragmentManager().beginTransaction()
-				.replace(R.id.weather_detail_container, DetailFragment
-						.newInstance(dateUri)).commit();
+		if (mTwoPane != false) {
+			// In two-pane mode, show the detail view in this activity by
+			// adding or replacing the detail fragment using a
+			// fragment transaction.
+			Bundle arguments = new Bundle();
+			arguments.putParcelable(DetailFragment.DETAIL_URI, dateUri);
+			
+			DetailFragment fragment = new DetailFragment();
+			
+			fragment.setArguments(arguments);
+			
+			getSupportFragmentManager()
+				.beginTransaction()
+					.replace(R.id.weather_detail_container, fragment
+							, DETAILFRAGMENT_TAG)
+								.commit();
+			
+		} else {  // Start new Activity
+			
+			Intent intent = new Intent(this, DetailActivity.class)
+				.setData(dateUri);
+			
+			this.startActivity(intent);
+			
 		}
-		
-		// TODO: Find the correct DetailFragment and have that replace what is 
-		// 		already there, unless it is the same.
-		//      We do this to maintain abstraction since 1 pane layout would 
-		//      otherwise crash.  Cannot assume that we always have a DetailFragment.
-		//      Make sure in 2 pane mode
 		
 	}
 

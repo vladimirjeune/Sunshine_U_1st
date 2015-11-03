@@ -78,6 +78,9 @@ public class SettingsActivity extends PreferenceActivity
     
     /**
      * GETPARENTACTIVITYINTENT - Fixes a bug that appears on some projects.
+     * 		Keeps a new MainActivity from being created that would not have the
+     * 		recently clicked item still clicked.  Otherwise, there would be 
+     * 		no indication of what was clicked when we returned.
      */
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override

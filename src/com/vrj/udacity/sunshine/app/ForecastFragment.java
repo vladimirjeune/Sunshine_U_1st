@@ -11,7 +11,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -105,6 +104,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 		// From the root of the Layout Hierarchy find the element you are looking for.
 		ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
 		// TODO:  May want to Set listView adapter here instead of below
+		listView.setAdapter(mForecastAdapter);  // Binding ArrayAdapter to ListView
 		
 		// ListView will pass an URI need for the DetailView
 		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -117,19 +117,15 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 				// if it cannot reach that position
 				Cursor cursor = (Cursor) parent.getItemAtPosition(position);
 
-				if (null != cursor) {
+				if (cursor != null) {
 
 					String locationSetting = Utility.getPreferredLocation(getActivity());
 					long theDate = cursor.getLong(COL_WEATHER_DATE);
 					
-					// What data was just picked
-					long oneDayMS = 86400000L;
-					long chosenDate = oneDayMS * position;
-
 					// Prepare URI to send to Activity or ultimately send to DetailFragment
 					Uri toSendUri = WeatherContract.WeatherEntry
 							.buildWeatherLocationWithDate(locationSetting
-									, theDate + chosenDate);
+									, theDate);
 					
 					// Checking for 1 or 2 pane, if 2 pane
 					View detailsFrame = getActivity().findViewById(R.id.weather_detail_container);
@@ -147,8 +143,6 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 				}
 			}
 		});
-		
-		listView.setAdapter(mForecastAdapter);  // Binding ArrayAdapter to ListView
 		
         return rootView;
     }

@@ -16,8 +16,23 @@ public class DetailActivity extends ActionBarActivity {
 		setContentView(R.layout.activity_detail);
 		
 		if (savedInstanceState == null) {
+			
+			// Create a bundle for the args of the DetailFragment
+			// Since you cannot create a new constructor.
+			// Android would not know to call it
+			Bundle arguments = new Bundle();
+			
+			// String URI and the actual uri as key and value
+			arguments.putParcelable(DetailFragment.DETAIL_URI
+					, getIntent().getData());
+			
+			
+			DetailFragment fragment = new DetailFragment();
+			// Set args for the Fragment
+			fragment.setArguments(arguments);
+			
 			getSupportFragmentManager().beginTransaction()
-					.add(R.id.weather_detail_container, new DetailFragment()).commit();
+					.add(R.id.weather_detail_container, fragment).commit();
 		}
 
 	}
