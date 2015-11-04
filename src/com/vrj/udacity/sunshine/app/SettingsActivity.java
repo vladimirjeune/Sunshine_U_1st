@@ -82,7 +82,7 @@ public class SettingsActivity extends PreferenceActivity
      * 		recently clicked item still clicked.  Otherwise, there would be 
      * 		no indication of what was clicked when we returned.
      */
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)  // Method did not exists prior to JB
     @Override
     public Intent getParentActivityIntent() {
         return super.getParentActivityIntent().addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

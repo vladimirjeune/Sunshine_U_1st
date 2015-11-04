@@ -103,6 +103,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		
+		// Read arguments fragment was initialized with
 		Bundle arguments = getArguments();
 		
 		if (arguments != null){

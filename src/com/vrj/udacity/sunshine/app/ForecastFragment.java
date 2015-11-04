@@ -103,7 +103,6 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
 		// From the root of the Layout Hierarchy find the element you are looking for.
 		ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
-		// TODO:  May want to Set listView adapter here instead of below
 		listView.setAdapter(mForecastAdapter);  // Binding ArrayAdapter to ListView
 		
 		// ListView will pass an URI need for the DetailView
@@ -127,19 +126,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 							.buildWeatherLocationWithDate(locationSetting
 									, theDate);
 					
-					// Checking for 1 or 2 pane, if 2 pane
-					View detailsFrame = getActivity().findViewById(R.id.weather_detail_container);
+					((Callback) getActivity()).onItemSelected(toSendUri);	
 
-					if (detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE) {  // There is already a details frame
-						// You only know that you are in an Activity that implements Callback
-						((Callback) getActivity()).onItemSelected(toSendUri);	
-					} else {
-							
-						Intent intent = new Intent(getActivity(), DetailActivity.class)
-						.setData(toSendUri);
-						startActivity(intent);
-						
-					}
 				}
 			}
 		});
