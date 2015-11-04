@@ -16,5 +16,10 @@
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
+    
+    <!-- Makes it so only one choice can be made in list; important for dual pane mode -->
+    <style name="oneChoice" parent="@android:style/Widget.ListView">
+        <item name="android:choiceMode">singleChoice</item>
+    </style>
 
 </resources>
