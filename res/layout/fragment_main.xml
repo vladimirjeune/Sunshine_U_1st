@@ -8,9 +8,12 @@
     android:paddingBottom="16dp"
     tools:context="com.vrj.udacity.sunshine.app.ForecastFragment" >
 
+    <!-- Using a style is better than having 2 fragment mains in different layouts -->
+    <!-- Even though it also needs 2 folders, it is more portable -->
     <ListView
         android:id="@+id/listview_forecast"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
+        android:layout_height="match_parent"
+        style="@style/ForecastListStyle" />
+    
 </FrameLayout>

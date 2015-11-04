@@ -18,8 +18,9 @@
     </style>
     
     <!-- Makes it so only one choice can be made in list; important for dual pane mode -->
-    <style name="oneChoice" parent="@android:style/Widget.ListView">
-        <item name="android:choiceMode">singleChoice</item>
+    <style name="ForecastListStyle">
+        <!-- Here it's a stub.  In screens of sufficient width, this style includes modifications
+        for two-pane layout -->
     </style>
 
 </resources>
