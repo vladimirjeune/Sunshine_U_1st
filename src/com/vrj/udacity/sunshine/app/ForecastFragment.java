@@ -45,8 +45,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 	public final static String EXTRA_MESSAGE ="com.vrj.udacity.sunshine.app.MESSAGE";
 	private final static int FORECAST_LOADER_ID = 0;
 	private ForecastAdapter mForecastAdapter = null;
-	private final static String POSITION = "position";
-	private int mSavePosition = 0;
+	private final static String SELECTED_KEY = "selected_position";
+	private int mPosition = ListView.INVALID_POSITION;
 	private ListView mListView = null;
 	
 	private static final String[] FORECAST_COLUMNS = {
@@ -94,15 +94,16 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 			Bundle savedInstanceState) {
 		
 		// 0, no flags set
-		// The CursorAdapter will take data from our cursor and populate the ListView
+		// The ForecastAdapter will take data from a source and
+		// use it to populate the ListView it's attached to.
 		// However, we cannot use FLAG_AUTO_REQUERY since it is deprecated, so we will end
 		// up with an empty list the first time we run.
         // Create an empty adapter we will use to display the loaded data.
 		mForecastAdapter = new ForecastAdapter(getActivity(), null, 0); 
 		
-		if (savedInstanceState != null ) {
-			mSavePosition = savedInstanceState.getInt(POSITION);  // Fix for 2pane rotation issue
-		}
+//		if (savedInstanceState != null ) {
+//			mPosition = savedInstanceState.getInt(SELECTED_KEY);  // Fix for 2pane rotation issue
+//		}
 
 		// This is the root of the hierarchy.  No need to get yourself.
 		View rootView = inflater.inflate(R.layout.fragment_main, container,
@@ -136,8 +137,20 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 					((Callback) getActivity()).onItemSelected(toSendUri);
 
 				}
+				mPosition = position;
 			}
 		});
+		
+		// If there's instance state, mine it for useful information.
+		// The end-goal here is that the user never knows that turning their device sideways
+		// does crazy lifecycle related things.  It should feel like some stuff stretched out,
+		// or magically appeared to take advantage of room, but data or place in the app was never
+		// actually *lost*.
+		if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY)) {  // Make sure it is not invalid state
+			// The listview probably hasn't even been populated yet.  Actually perform the
+			// swapout in onLoadFinished.
+			mPosition = savedInstanceState.getInt(SELECTED_KEY);
+		}
 		
         return rootView;
     }
@@ -162,7 +175,12 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
 		// Save position to fix flaw on some tablets that do not hold activated
 		// button on orientation change.  Phones do not have this requirement
-		outState.putInt(POSITION, mSavePosition);
+		// When tablets rotate, the currently selected list item needs to be saved.
+		// When no item is selected, mPosition will be set to Listview.INVALID_POSITION,
+		// so check for that before storing.
+		if (mPosition != ListView.INVALID_POSITION) {
+			outState.putInt(SELECTED_KEY, mPosition);
+		}
 		
 		// Always call the superclass so it can save the view hierarchy state
 		super.onSaveInstanceState(outState);
@@ -217,6 +235,11 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 	public Loader<Cursor> onCreateLoader(int anId, Bundle aBundle) {
 		//		 	Get data to populate ForecastFragment from DB
 		String locationSetting = Utility.getPreferredLocation(getActivity());
+		// This is called when a new Loader needs to be created.  This
+		// fragment only uses one loader, so we don't care about checking the id.
+		
+		// To only show current and future dates, filter the query to return weather only for
+		// dates after or including today.
 		
 		// We want sort order ASCending by date
 		String sortOrder = WeatherContract.WeatherEntry.COLUMN_DATE + " ASC";
@@ -244,7 +267,11 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 		mForecastAdapter.swapCursor(arg1);  // Switch to using this cursor		
 		
 		// Fixes 2 pane bug that does not hold activated state after orient change
-		mListView.smoothScrollToPosition(mSavePosition);
+		if (mPosition != ListView.INVALID_POSITION) {
+			// If we don't need to restart the loader, and there's a desired position to restore
+			// to, do so now.
+			mListView.smoothScrollToPosition(mPosition);
+		}
 	}
 
 	/**
