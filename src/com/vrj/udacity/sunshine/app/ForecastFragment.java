@@ -45,6 +45,9 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 	public final static String EXTRA_MESSAGE ="com.vrj.udacity.sunshine.app.MESSAGE";
 	private final static int FORECAST_LOADER_ID = 0;
 	private ForecastAdapter mForecastAdapter = null;
+	private final static String POSITION = "position";
+	private int mSavePosition = 0;
+	private ListView mListView = null;
 	
 	private static final String[] FORECAST_COLUMNS = {
 		// In this case the id needs to be fully qualified with a table name, since
@@ -96,17 +99,21 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 		// up with an empty list the first time we run.
         // Create an empty adapter we will use to display the loaded data.
 		mForecastAdapter = new ForecastAdapter(getActivity(), null, 0); 
+		
+		if (savedInstanceState != null ) {
+			mSavePosition = savedInstanceState.getInt(POSITION);  // Fix for 2pane rotation issue
+		}
 
 		// This is the root of the hierarchy.  No need to get yourself.
 		View rootView = inflater.inflate(R.layout.fragment_main, container,
 				false);
 
 		// From the root of the Layout Hierarchy find the element you are looking for.
-		ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
-		listView.setAdapter(mForecastAdapter);  // Binding ArrayAdapter to ListView
+		mListView = (ListView) rootView.findViewById(R.id.listview_forecast);
+		mListView.setAdapter(mForecastAdapter);  // Binding ArrayAdapter to ListView
 		
 		// ListView will pass an URI need for the DetailView
-		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+		mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
@@ -126,7 +133,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 							.buildWeatherLocationWithDate(locationSetting
 									, theDate);
 					
-					((Callback) getActivity()).onItemSelected(toSendUri);	
+					((Callback) getActivity()).onItemSelected(toSendUri);
 
 				}
 			}
@@ -145,6 +152,21 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         // or start a new one.
 		getLoaderManager().initLoader(FORECAST_LOADER_ID, null, this);
 		super.onActivityCreated(savedInstanceState);  // From instructor correction
+	}
+
+	/* (non-Javadoc)
+	 * @see android.support.v4.app.Fragment#onSaveInstanceState(android.os.Bundle)
+	 */
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+
+		// Save position to fix flaw on some tablets that do not hold activated
+		// button on orientation change.  Phones do not have this requirement
+		outState.putInt(POSITION, mSavePosition);
+		
+		// Always call the superclass so it can save the view hierarchy state
+		super.onSaveInstanceState(outState);
+		
 	}
 
 	@Override
@@ -220,6 +242,9 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 	    // Swap the new cursor in.  (The framework will take care of closing the
 	    // old cursor once we return.)
 		mForecastAdapter.swapCursor(arg1);  // Switch to using this cursor		
+		
+		// Fixes 2 pane bug that does not hold activated state after orient change
+		mListView.smoothScrollToPosition(mSavePosition);
 	}
 
 	/**
