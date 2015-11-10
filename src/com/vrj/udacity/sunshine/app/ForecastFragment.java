@@ -155,11 +155,17 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 	
 	/**
 	 * SETPROPERLISTDISPLAY - will set the list in such a way that the 1st element 
-	 * 		will be the colored Today icon, or not
+	 * 		will be the colored Today icon, or not.
+	 * 		This is done again in onCreateView, just in case 
+	 * 		called when ForecastAdapter is null.  Since this is public and can be called any time.
+	 * 		Furthermore, Activity::onCreate() will happen before ForecastFragment::onCreateView()
 	 * @param twoPaneDisplay - boolean - use display for 1 pane(colored) or 2 pane mode
 	 */
 	public void setProperListDisplay(boolean twoPaneDisplay) {
 		mTwoPaneDisplayList = twoPaneDisplay;
+		if (mForecastAdapter != null) {
+			mForecastAdapter.setListDisplayType(mTwoPaneDisplayList);  // Setting display var of ForecastAdapter
+		}
 	}
 	
 	/**
