@@ -46,6 +46,12 @@ public class MainActivity extends ActionBarActivity implements ForecastFragment.
 			mTwoPane = false;
 		}
 		
+		// Set list's display for 2 pane mode or single pane mode
+		// Fragment should always be there since not dynamically allocated ever.
+		ForecastFragment fg = (ForecastFragment) getSupportFragmentManager()
+				.findFragmentById(R.id.fragment_forecast);
+		fg.setProperListDisplay(mTwoPane);  
+		
 		Log.i(LOG_TAG, "ONCREATE()");
 	}
 

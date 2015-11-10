@@ -48,6 +48,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 	private final static String SELECTED_KEY = "selected_position";
 	private int mPosition = ListView.INVALID_POSITION;
 	private ListView mListView = null;
+	private boolean mTwoPaneDisplayList = false;
 	
 	private static final String[] FORECAST_COLUMNS = {
 		// In this case the id needs to be fully qualified with a table name, since
@@ -101,16 +102,13 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         // Create an empty adapter we will use to display the loaded data.
 		mForecastAdapter = new ForecastAdapter(getActivity(), null, 0); 
 		
-//		if (savedInstanceState != null ) {
-//			mPosition = savedInstanceState.getInt(SELECTED_KEY);  // Fix for 2pane rotation issue
-//		}
-
 		// This is the root of the hierarchy.  No need to get yourself.
 		View rootView = inflater.inflate(R.layout.fragment_main, container,
 				false);
 
 		// From the root of the Layout Hierarchy find the element you are looking for.
 		mListView = (ListView) rootView.findViewById(R.id.listview_forecast);
+		mForecastAdapter.setListDisplayType(mTwoPaneDisplayList);  // Setting display var of ForecastAdapter
 		mListView.setAdapter(mForecastAdapter);  // Binding ArrayAdapter to ListView
 		
 		// ListView will pass an URI need for the DetailView
@@ -154,6 +152,15 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 		
         return rootView;
     }
+	
+	/**
+	 * SETPROPERLISTDISPLAY - will set the list in such a way that the 1st element 
+	 * 		will be the colored Today icon, or not
+	 * @param twoPaneDisplay - boolean - use display for 1 pane(colored) or 2 pane mode
+	 */
+	public void setProperListDisplay(boolean twoPaneDisplay) {
+		mTwoPaneDisplayList = twoPaneDisplay;
+	}
 	
 	/**
 	 * ONACTIVITYCREATED - Initialize Loader with LoaderManager in this callback.

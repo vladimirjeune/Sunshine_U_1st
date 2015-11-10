@@ -25,10 +25,23 @@ public class ForecastAdapter extends CursorAdapter {
     private static final int VIEW_TYPE_TODAY = 0;
     private static final int VIEW_TYPE_FUTURE_DAY = 1;
     private static final int VIEW_TYPE_COUNT = 2;
+    private boolean mUseFutureType = false;
+    
+    /**
+     * SETLISTDISPLAYTYPE - will be used to tell us whether we are using the Today
+     * 		type color graphics for the forecast list.  Otherwise we will use the
+     * 		regular icons for the entire list: AKA - 2 pane mode (all grey icons)
+     * @param useTwoPane
+     * @return
+     */
+    public void setListDisplayType(boolean useTwoPane) {
+    	mUseFutureType = useTwoPane;
+    }
     
     @Override
     public int getItemViewType(int position) {
-        return position == 0 ? VIEW_TYPE_TODAY : VIEW_TYPE_FUTURE_DAY;
+        return ((position == 0) && (false == mUseFutureType)) 
+        		? VIEW_TYPE_TODAY : VIEW_TYPE_FUTURE_DAY;
     }
 
     @Override
