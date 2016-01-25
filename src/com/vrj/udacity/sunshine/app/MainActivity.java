@@ -44,6 +44,7 @@ public class MainActivity extends ActionBarActivity implements ForecastFragment.
             }
 		} else {
 			mTwoPane = false;
+//			getSupportActionBar().setElavation(0f);
 		}
 		
 		// Set list's display for 2 pane mode or single pane mode
