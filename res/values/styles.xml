@@ -7,8 +7,8 @@
     -->
     <style name="AppTheme" parent="@style/Theme.AppCompat.Light.DarkActionBar">
         <!-- 
-        <item name="colorPrimary">@color/sunshine_blue</item>
-        <item name="colorPrimaryDark">@color/sunshine_dark_blue</item>
+          <item name="colorPrimary">@color/sunshine_blue</item>
+          <item name="colorPrimaryDark">@color/sunshine_dark_blue</item>
         -->
         
         <!-- http://stackoverflow.com/questions/23155637/change-background-color-of-the-action-bar-using-appcompat -->
